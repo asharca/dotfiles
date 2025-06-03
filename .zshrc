@@ -600,7 +600,7 @@ start_tmux() {
 }
 
 # 调用函数启动 tmux
-start_tmux
+# start_tmux
 
 #------------------------------
 # External Configs
@@ -754,4 +754,4 @@ fpath=(/Users/ashark/.docker/completions $fpath)
 autoload -Uz compinit
 compinit
 # End of Docker CLI completions
-alias config='/usr/bin/git --git-dir=/Users/ashark/.cfg/ --work-tree=/Users/ashark'
+alias config='$PREFIX/bin/git --git-dir=$HOME/.cfg/ --work-tree=$HOME'
