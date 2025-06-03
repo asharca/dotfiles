@@ -1,0 +1,66 @@
+" .ideavimrc is a configuration file for IdeaVim plugin. It uses
+"   the same commands as the original .vimrc configuration.
+" You can find a list of commands here: https://jb.gg/h38q75
+" Find more examples here: https://jb.gg/share-ideavimrc
+source ~/.vimrc
+
+""" Map leader to space ---------------------
+let mapleader=" "
+
+"" -- Suggested options --
+" Show a few lines of context around the cursor. Note that this makes the
+" text scroll if you mouse-click near the start or end of the window.
+set scrolloff=5
+
+" Do incremental searching.
+set incsearch
+
+" Don't use Ex mode, use Q for formatting.
+map Q gq
+
+" --- Enable IdeaVim plugins https://jb.gg/ideavim-plugins
+
+Plug 'machakann/vim-highlightedyank'
+Plug 'easymotion/vim-easymotion'
+Plug 'preservim/nerdtree'
+set easymotion
+set commentary
+set NERDTree
+set clipboard+=unnamedplus
+set number
+set relativenumber
+
+nnoremap <leader>e :NERDTreeFind<CR>:wincmd p<CR>
+nnoremap <leader>e :NERDTreeToggle<CR>
+nmap s <Plug>(easymotion-s2)
+nnoremap <C-h> <C-w>h
+nnoremap <C-l> <C-w>l
+nnoremap <C-j> <C-w>j
+nnoremap <C-k> <C-w>k
+nnoremap L :tabnext<cr>
+nnoremap H :tabprevious<cr>
+
+"" -- map ide actions to ideavim -- https://jb.gg/abva4t
+""" idea specific settings ------------------
+"set ideajoin
+"set ideastatusicon=gray
+"set idearefactormode=keep
+
+""" mappinplug 'preservim/nerdtree'gs --------------------------------
+"map <leader>f <plug>(easymotion-s)
+"map <leader>e <plug>(easymotion-f)
+map <C-space> <action>(EditorSelectWord)
+map <C-/> :shell<cr>
+"nnoremap <BS> <action>(EditorUnSelectWord) " not work
+"map <leader>d <Action>(Debug)
+"map <leader>r <Action>(RenameElement)
+"map <leader>c <Action>(Stop)
+"map <leader>z <Action>(ToggleDistractionFreeMode)
+
+"map <leader>s <Action>(SelectInProjectView)
+"map <leader>a <Action>(Annotate)
+"map <leader>h <Action>(Vcs.ShowTabbedFileHistory)
+"map <S-Space> <Action>(GotoNextError)
+
+"map <leader>b <Action>(ToggleLineBreakpoint)
+"map <leader>o <Action>(FileStructurePopup)

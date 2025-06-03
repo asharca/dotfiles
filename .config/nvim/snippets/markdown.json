@@ -1,0 +1,19 @@
+{
+  "details": {
+    "prefix": "details",
+    "body": [
+      "<details>",
+      "<summary>${1:summary}</summary>",
+      "</details>"
+    ],
+    "description": "output html details tag"
+  },
+  "tags": {
+    "prefix": "tags",
+    "body": [
+      "{% note ${1:primary} %}",
+      "$2",
+      "{% endnote %}"
+    ]
+  }
+}
