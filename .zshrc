@@ -60,6 +60,7 @@ zplug 'junegunn/fzf'                              # Fuzzy finder
 zplug 'wting/autojump'
 
 export DRACULA_DISPLAY_CONTEXT=1
+export DRACULA_DISPLAY_FULL_CWD=1
 
 if (( $+commands[brew] )); then
   # 通过 homebrew 安装的 autojump
@@ -77,7 +78,7 @@ fi
 if ! zplug check; then
     printf "install missing plugins? [y/n]: "
     if read -q; then
-        echo; zplug install --verbose
+        echo; zplug install
     fi
 fi
 
@@ -239,7 +240,7 @@ alias glog='git log --oneline --graph --decorate'
 alias gdiff='git diff'
 
 # File operations (safer defaults)
-alias rm='echo "This is not the command you are looking for. Use trash-put or rm -i instead."; false'
+# alias rm='echo "This is not the command you are looking for. Use trash-put or rm -i instead."; false'
 alias tp='trash-put'
 alias cp='cp -i'
 alias mv='mv -i'
@@ -600,7 +601,7 @@ start_tmux() {
 }
 
 # 调用函数启动 tmux
-start_tmux
+# start_tmux
 
 #------------------------------
 # External Configs
@@ -625,7 +626,7 @@ unset __conda_setup
 export PATH="$PATH:$HOME/.lmstudio/bin"
 
 # Initialize proxy by default (comment out if not needed)
-setproxy
+# setproxy
 
 clear
 # The following lines have been added by Docker Desktop to enable Docker CLI completions.
@@ -754,4 +755,4 @@ fpath=(/Users/ashark/.docker/completions $fpath)
 autoload -Uz compinit
 compinit
 # End of Docker CLI completions
-alias config='/usr/bin/git --git-dir=/Users/ashark/.cfg/ --work-tree=/Users/ashark'
+alias config='/usr/bin/git --git-dir=$HOME/.cfg/ --work-tree=$HOME'
