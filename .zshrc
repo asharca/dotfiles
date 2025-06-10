@@ -629,11 +629,6 @@ export PATH="$PATH:$HOME/.lmstudio/bin"
 # setproxy
 
 clear
-# The following lines have been added by Docker Desktop to enable Docker CLI completions.
-fpath=(/Users/artbix/.docker/completions $fpath)
-autoload -Uz compinit
-compinit
-# End of Docker CLI completions
 
 # 使用asciinema录制终端会话
 record-terminal() {
@@ -751,7 +746,7 @@ function y() {
 
 ___MY_VMOPTIONS_SHELL_FILE="${HOME}/.jetbrains.vmoptions.sh"; if [ -f "${___MY_VMOPTIONS_SHELL_FILE}" ]; then . "${___MY_VMOPTIONS_SHELL_FILE}"; fi
 # The following lines have been added by Docker Desktop to enable Docker CLI completions.
-fpath=(/Users/ashark/.docker/completions $fpath)
+fpath=($HOME/.docker/completions $fpath)
 autoload -Uz compinit
 compinit
 # End of Docker CLI completions
