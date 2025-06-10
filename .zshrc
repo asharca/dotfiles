@@ -573,35 +573,31 @@ fpath=($HOME/.docker/completions $fpath)
 # 3. 不在 nvim 等编辑器的终端中
 # 4. 是交互式终端
 start_tmux() {
-  # 检查 tmux 是否已安装
-  if command -v tmux &> /dev/null; then
-    # 检查是否已在 tmux 会话中
-    if [[ -z "$TMUX" ]]; then
-      # 检查是否在 nvim 或其他编辑器的终端中
-      # 通过检查 TERM 变量和父进程
-      if [[ "$TERM_PROGRAM" != "vscode" ]] && \
-         [[ "$TERM" != "dumb" ]] && \
-         [[ -z "$NVIM" ]] && \
-         [[ -z "$NVIM_LISTEN_ADDRESS" ]] && \
-         [[ -z "$VIM_TERMINAL" ]] && \
-         [[ "$VIMRUNTIME" = "" ]] && \
-         [[ "$TERMINAL_EMULATOR" != "JetBrains-JediTerm" ]]; then
-        # 检查父进程，避免在 nvim 的终端中启动
-        local parent_process=$(ps -o comm= -p $PPID)
-        if [[ "$parent_process" != *"nvim"* ]] && \
-           [[ "$parent_process" != *"vim"* ]]; then
-          # 交互式终端检查
-          if [[ -t 1 ]]; then
-            tmux
-          fi
-        fi
-      fi
-    fi
+  command -v tmux &> /dev/null || return
+
+  [[ -n "$TMUX" ]] && return
+
+  [[ "$TERM_PROGRAM" == "vscode" ]] && return
+  [[ "$TERM" == "dumb" ]] && return
+  [[ -n "$NVIM" || -n "$NVIM_LISTEN_ADDRESS" || -n "$VIM_TERMINAL" || -n "$VIMRUNTIME" ]] && return
+  [[ "$TERMINAL_EMULATOR" == "JetBrains-JediTerm" ]] && return
+
+  local parent_process
+  parent_process=$(ps -o comm= -p $PPID 2>/dev/null)
+  [[ "$parent_process" == *nvim* || "$parent_process" == *vim* ]] && return
+
+  [[ -t 1 ]] || return
+
+  if tmux ls &>/dev/null; then
+    local first_session
+    first_session=$(tmux ls | head -n 1 | cut -d: -f1)
+    tmux attach-session -t "$first_session"
+  else
+    tmux
   fi
 }
 
-# 调用函数启动 tmux
-# start_tmux
+start_tmux
 
 #------------------------------
 # External Configs
@@ -627,8 +623,6 @@ export PATH="$PATH:$HOME/.lmstudio/bin"
 
 # Initialize proxy by default (comment out if not needed)
 # setproxy
-
-clear
 
 # 使用asciinema录制终端会话
 record-terminal() {
