@@ -62,10 +62,7 @@ zplug 'wting/autojump'
 export DRACULA_DISPLAY_CONTEXT=1
 export DRACULA_DISPLAY_FULL_CWD=1
 
-if (( $+commands[brew] )); then
-  # 通过 homebrew 安装的 autojump
-  [[ -f $(brew --prefix)/etc/profile.d/autojump.sh ]] && . $(brew --prefix)/etc/profile.d/autojump.sh
-elif [[ -f ~/.autojump/etc/profile.d/autojump.sh ]]; then
+if [[ -f ~/.autojump/etc/profile.d/autojump.sh ]]; then
   . ~/.autojump/etc/profile.d/autojump.sh
 else
   echo "autojump 未安装，尝试通过 git 安装..."
@@ -605,14 +602,14 @@ start_tmux
 
 # >>> conda initialize >>>
 # !! Contents within this block are managed by 'conda init' !!
-__conda_setup="$('/opt/anaconda3/bin/conda' 'shell.zsh' 'hook' 2> /dev/null)"
+__conda_setup="$('/home/artyang/anaconda3/bin/conda' 'shell.zsh' 'hook' 2> /dev/null)"
 if [ $? -eq 0 ]; then
     eval "$__conda_setup"
 else
-    if [ -f "/opt/anaconda3/etc/profile.d/conda.sh" ]; then
-        . "/opt/anaconda3/etc/profile.d/conda.sh"
+    if [ -f "/home/artyang/anaconda3/etc/profile.d/conda.sh" ]; then
+        . "/home/artyang/anaconda3/etc/profile.d/conda.sh"
     else
-        export PATH="/opt/anaconda3/bin:$PATH"
+        export PATH="/home/artyang/anaconda3/bin:$PATH"
     fi
 fi
 unset __conda_setup
@@ -745,3 +742,6 @@ autoload -Uz compinit
 compinit
 # End of Docker CLI completions
 alias config='/usr/bin/git --git-dir=$HOME/.cfg/ --work-tree=$HOME'
+# export PATH="/home/artyang/anaconda3/bin:$PATH"  # commented out by conda initialize
+#Anacondaexport
+# PATH=$PATH:/home/artyang/anaconda3/bin
