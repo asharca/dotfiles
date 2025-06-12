@@ -596,7 +596,7 @@ start_tmux() {
   fi
 }
 
-start_tmux
+# start_tmux
 
 #------------------------------
 # External Configs
