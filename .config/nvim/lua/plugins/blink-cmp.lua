@@ -25,8 +25,9 @@ return {
       },
     },
     keymap = {
-      ["<C-u>"] = { "scroll_documentation_up", "fallback" },
-      ["<C-d>"] = { "scroll_documentation_down", "fallback" },
+      ["<Tab>"] = { "select_next", "fallback" },
+      ["<S-Tab>"] = { "select_prev", "fallback" },
+      ["<CR>"] = { "select_and_accept", "fallback" },
     },
     signature = {
       enabled = true,
