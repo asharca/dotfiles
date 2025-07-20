@@ -2,6 +2,7 @@
 # File:     .zshrc   ZSH resource file                             #
 # Author: artibix                                          #
 #------------------------------------------------------------------#
+
 # zmodload zsh/zprof
 # zmodload zsh/datetime
 # starttime=$EPOCHREALTIME
@@ -14,44 +15,48 @@ GREEN='\033[0;32m'
 YELLOW='\033[1;33m'
 NC='\033[0m'
 
-if ! command -v python3 &>/dev/null; then
-    echo -e "${YELLOW}正在尝试自动安装Python3, nvim${NC}"
+TOOLS=(python3 nvim tmux)
+MISSING=()
 
-    if [ -f /etc/os-release ]; then
-        . /etc/os-release
-        case $ID in
-            debian|ubuntu)
-                echo -e "${YELLOW}检测到 Debian/Ubuntu，使用 apt 安装 Python 3...${NC}"
-                sudo apt update && sudo apt install -y python3 python3-pip nvim
-                ;;
-            fedora)
-                echo -e "${YELLOW}检测到 Fedora，使用 dnf 安装 Python 3...${NC}"
-                sudo dnf install -y python3 python3-pip nvim
-                ;;
-            centos|rhel)
-                echo -e "${YELLOW}检测到 CentOS/RHEL，使用 yum 安装 Python 3...${NC}"
-                sudo yum install -y python3 python3-pip nvim
-                ;;
-            arch)
-                echo -e "${YELLOW}检测到 Arch Linux，使用 pacman 安装 Python 3...${NC}"
-                sudo pacman -Syu --noconfirm python python-pip nvim
-                ;;
-            *)
-                echo -e "${RED}无法识别的 Linux 发行版，无法自动安装 Python 3。${NC}"
-                exit 1
-                ;;
-        esac
-    else
-        echo -e "${RED}无法检测到 Linux 发行版，无法自动安装 Python3, nvim。${NC}"
-        exit 1
+for t in "${TOOLS[@]}"; do
+    if ! command -v "$t" &>/dev/null; then
+        MISSING+=("$t")
     fi
+done
 
-    if command -v python3 &>/dev/null; then
-    else
-        echo -e "${RED}安装失败，请检查网络或权限。${NC}"
-        exit 1
-    fi
+if [ -f /etc/os-release ]; then
+    . /etc/os-release
+    case $ID in
+        debian|ubuntu)
+            sudo apt update
+            sudo apt install -y "${MISSING[@]}"
+            ;;
+        fedora)
+            sudo dnf install -y "${MISSING[@]}"
+            ;;
+        centos|rhel)
+            sudo yum install -y "${MISSING[@]}"
+            ;;
+        arch)
+            sudo pacman -Syu --noconfirm "${MISSING[@]}"
+            ;;
+        *)
+            echo -e "${RED}无法识别的 Linux 发行版，无法自动安装。${NC}"
+            exit 1
+            ;;
+    esac
+else
+    echo -e "${RED}无法检测到 Linux 发行版，无法自动安装。${NC}"
+    exit 1
 fi
+
+for t in "${MISSING[@]}"; do
+    if ! command -v "$t" &>/dev/null; then
+        echo -e "${RED}$t 安装失败，请检查网络或权限。${NC}"
+        exit 1
+    fi
+done
+
 
 # History Configuration
 HISTFILE="${HOME}/.zsh_history"
@@ -107,7 +112,6 @@ export DRACULA_DISPLAY_CONTEXT=1
 export DRACULA_DISPLAY_FULL_CWD=1
 
 if (( $+commands[brew] )); then
-  # 通过 homebrew 安装的 autojump
   [[ -f $(brew --prefix)/etc/profile.d/autojump.sh ]] && . $(brew --prefix)/etc/profile.d/autojump.sh
 elif [[ -f ~/.zsh/autojump/install.py ]]; then
   . ~/.autojump/etc/profile.d/autojump.sh
@@ -144,6 +148,9 @@ else
   git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf && ~/.fzf/install
 fi
 
+if [[ -f ~/.tmux/plugins/tpm ]]; then
+  git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
+fi
 export FZF_DEFAULT_COMMAND='fd --type f --hidden --exclude ".git" --exclude "node_modules" . --color=always'
 export FZF_DEFAULT_OPTS='--ansi'
 # 检查 fd 是否安装
