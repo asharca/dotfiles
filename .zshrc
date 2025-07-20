@@ -15,26 +15,26 @@ YELLOW='\033[1;33m'
 NC='\033[0m'
 
 if ! command -v python3 &>/dev/null; then
-    echo -e "${YELLOW}Python 3 未安装，正在尝试自动安装...${NC}"
+    echo -e "${YELLOW}正在尝试自动安装Python3, nvim${NC}"
 
     if [ -f /etc/os-release ]; then
         . /etc/os-release
         case $ID in
             debian|ubuntu)
                 echo -e "${YELLOW}检测到 Debian/Ubuntu，使用 apt 安装 Python 3...${NC}"
-                sudo apt update && sudo apt install -y python3 python3-pip
+                sudo apt update && sudo apt install -y python3 python3-pip nvim
                 ;;
             fedora)
                 echo -e "${YELLOW}检测到 Fedora，使用 dnf 安装 Python 3...${NC}"
-                sudo dnf install -y python3 python3-pip
+                sudo dnf install -y python3 python3-pip nvim
                 ;;
             centos|rhel)
                 echo -e "${YELLOW}检测到 CentOS/RHEL，使用 yum 安装 Python 3...${NC}"
-                sudo yum install -y python3 python3-pip
+                sudo yum install -y python3 python3-pip nvim
                 ;;
             arch)
                 echo -e "${YELLOW}检测到 Arch Linux，使用 pacman 安装 Python 3...${NC}"
-                sudo pacman -Syu --noconfirm python python-pip
+                sudo pacman -Syu --noconfirm python python-pip nvim
                 ;;
             *)
                 echo -e "${RED}无法识别的 Linux 发行版，无法自动安装 Python 3。${NC}"
@@ -42,14 +42,13 @@ if ! command -v python3 &>/dev/null; then
                 ;;
         esac
     else
-        echo -e "${RED}无法检测到 Linux 发行版，无法自动安装 Python 3。${NC}"
+        echo -e "${RED}无法检测到 Linux 发行版，无法自动安装 Python3, nvim。${NC}"
         exit 1
     fi
 
     if command -v python3 &>/dev/null; then
-        echo -e "${GREEN}Python 3 安装成功，版本为：$(python3 --version)${NC}"
     else
-        echo -e "${RED}Python 3 安装失败，请检查网络或权限。${NC}"
+        echo -e "${RED}安装失败，请检查网络或权限。${NC}"
         exit 1
     fi
 fi
