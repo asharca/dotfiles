@@ -115,11 +115,10 @@ elif [[ -f ~/.autojump/etc/profile.d/autojump.sh ]]; then
 else
   echo "autojump 未安装，尝试通过 git 安装..."
   git clone https://github.com/wting/autojump.git ~/.zsh/autojump
-  ~/.zsh/autojump/install.py
+  cd ~/.zsh/autojump/ && ./install.py
   . ~/.autojump/etc/profile.d/autojump.sh
 fi
 
-# install plugins if needed
 if ! zplug check; then
     printf "install missing plugins? [y/n]: "
     if read -q; then
@@ -127,7 +126,6 @@ if ! zplug check; then
     fi
 fi
 
-# load plugins
 zplug load
 
 #------------------------------
