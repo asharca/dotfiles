@@ -42,18 +42,15 @@ if [ -f /etc/os-release ]; then
             ;;
         *)
             echo -e "${RED}无法识别的 Linux 发行版，无法自动安装。${NC}"
-            exit 1
             ;;
     esac
 else
     echo -e "${RED}无法检测到 Linux 发行版，无法自动安装。${NC}"
-    exit 1
 fi
 
 for t in "${MISSING[@]}"; do
     if ! command -v "$t" &>/dev/null; then
         echo -e "${RED}$t 安装失败，请检查网络或权限。${NC}"
-        exit 1
     fi
 done
 
