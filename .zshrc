@@ -9,6 +9,51 @@
 # ZSH Core Configuration
 #------------------------------
 
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+YELLOW='\033[1;33m'
+NC='\033[0m'
+
+if ! command -v python3 &>/dev/null; then
+    echo -e "${YELLOW}Python 3 未安装，正在尝试自动安装...${NC}"
+
+    if [ -f /etc/os-release ]; then
+        . /etc/os-release
+        case $ID in
+            debian|ubuntu)
+                echo -e "${YELLOW}检测到 Debian/Ubuntu，使用 apt 安装 Python 3...${NC}"
+                sudo apt update && sudo apt install -y python3 python3-pip
+                ;;
+            fedora)
+                echo -e "${YELLOW}检测到 Fedora，使用 dnf 安装 Python 3...${NC}"
+                sudo dnf install -y python3 python3-pip
+                ;;
+            centos|rhel)
+                echo -e "${YELLOW}检测到 CentOS/RHEL，使用 yum 安装 Python 3...${NC}"
+                sudo yum install -y python3 python3-pip
+                ;;
+            arch)
+                echo -e "${YELLOW}检测到 Arch Linux，使用 pacman 安装 Python 3...${NC}"
+                sudo pacman -Syu --noconfirm python python-pip
+                ;;
+            *)
+                echo -e "${RED}无法识别的 Linux 发行版，无法自动安装 Python 3。${NC}"
+                exit 1
+                ;;
+        esac
+    else
+        echo -e "${RED}无法检测到 Linux 发行版，无法自动安装 Python 3。${NC}"
+        exit 1
+    fi
+
+    if command -v python3 &>/dev/null; then
+        echo -e "${GREEN}Python 3 安装成功，版本为：$(python3 --version)${NC}"
+    else
+        echo -e "${RED}Python 3 安装失败，请检查网络或权限。${NC}"
+        exit 1
+    fi
+fi
+
 # History Configuration
 HISTFILE="${HOME}/.zsh_history"
 HISTSIZE=1000000                          # Increased for better history retention
@@ -70,7 +115,7 @@ elif [[ -f ~/.autojump/etc/profile.d/autojump.sh ]]; then
 else
   echo "autojump 未安装，尝试通过 git 安装..."
   git clone https://github.com/wting/autojump.git ~/.zsh/autojump
-  cd ~/.zsh/autojump && ./install.py
+  ~/.zsh/autojump/install.py
   . ~/.autojump/etc/profile.d/autojump.sh
 fi
 
@@ -147,7 +192,9 @@ export LS_COLORS='rs=0:di=01;34:ln=01;36:pi=40;33:so=01;35:do=01;35:bd=40;33;01:
 
 # Node.js / npm
 export NPM_PACKAGES="${HOME}/.npm-global"
-npm config set prefix $NPM_PACKAGES
+if command -v npm >/dev/null 2>&1; then
+    npm config set prefix "$NPM_PACKAGES"
+fi
 export PATH="$PATH:$NPM_PACKAGES/bin"
 
 # Yarn
