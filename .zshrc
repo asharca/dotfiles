@@ -10,61 +10,6 @@
 # ZSH Core Configuration
 #------------------------------
 
-#!/usr/bin/env bash
-set -euo pipefail
-
-RED='\033[0;31m'; GREEN='\033[0;32m'; YELLOW='\033[1;33m'; NC='\033[0m'
-
-# 1. 需要检查的工具
-TOOLS=(git gcc g++ make python3 nvim tmux node)
-
-# 2. 工具存在性检查
-tool_ok() {
-    case "$1" in
-        gcc)  command -v gcc &>/dev/null  || command -v clang &>/dev/null ;;
-        g++)  command -v g++ &>/dev/null  || command -v clang++ &>/dev/null ;;
-        node) command -v node &>/dev/null ;;
-        *)    command -v "$1" &>/dev/null ;;
-    esac
-}
-
-ensure_tools() {
-    local missing=()
-    for t in "${TOOLS[@]}"; do tool_ok "$t" || missing+=("$t"); done
-    [[ ${#missing[@]} -eq 0 ]] && return 0
-
-    echo -e "${YELLOW}缺失工具: ${missing[*]}，正在自动安装...${NC}"
-    install_tools "${missing[@]}" || {
-        echo -e "${RED}安装失败，请手动解决后再运行脚本${NC}" >&2
-        exit 1
-    }
-}
-
-install_tools() {
-    local -a pkgs=("$@")
-    case "$OSTYPE" in
-        linux*)
-            . /etc/os-release
-            case $ID in
-                debian|ubuntu) sudo apt update && sudo apt install -y "${pkgs[@]/node/nodejs npm}" ;;
-                fedora)        sudo dnf install -y "${pkgs[@]}" ;;
-                centos|rhel)   sudo yum install -y "${pkgs[@]}" ;;
-                arch)          sudo pacman -Syu --noconfirm "${pkgs[@]/node/nodejs npm}" ;;
-                *)             return 1 ;;
-            esac
-            ;;
-        darwin*)
-            if   command -v brew &>/dev/null; then brew install "$@"
-            elif command -v port &>/dev/null; then sudo port install "$@"
-            else return 1; fi
-            ;;
-        *) return 1 ;;
-    esac
-}
-
-# 3. 确保工具就位后继续
-ensure_tools
-
 # History Configuration
 HISTFILE="${HOME}/.zsh_history"
 HISTSIZE=1000000                          # Increased for better history retention
