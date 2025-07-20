@@ -110,13 +110,14 @@ export DRACULA_DISPLAY_FULL_CWD=1
 if (( $+commands[brew] )); then
   # 通过 homebrew 安装的 autojump
   [[ -f $(brew --prefix)/etc/profile.d/autojump.sh ]] && . $(brew --prefix)/etc/profile.d/autojump.sh
-elif [[ -f ~/.autojump/etc/profile.d/autojump.sh ]]; then
+elif [[ -f ~/.zsh/autojump/install.py ]]; then
   . ~/.autojump/etc/profile.d/autojump.sh
 else
   echo "autojump 未安装，尝试通过 git 安装..."
   git clone https://github.com/wting/autojump.git ~/.zsh/autojump
   cd ~/.zsh/autojump/ && ./install.py
   . ~/.autojump/etc/profile.d/autojump.sh
+  cd ~
 fi
 
 if ! zplug check; then
