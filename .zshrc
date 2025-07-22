@@ -482,12 +482,6 @@ setproxy() {
     export http_proxy="http://${host}:${port}"
     export https_proxy="http://${host}:${port}"
     export all_proxy="http://${host}:${port}"
-
-    echo "Proxy enabled - http://${host}:${port}"
-    echo "Environment variables set:"
-    echo "  http_proxy:  $http_proxy"
-    echo "  https_proxy: $https_proxy"
-    echo "  all_proxy:   $all_proxy"
 }
 
 unsetproxy() {
