@@ -209,6 +209,9 @@ bindkey "^A" beginning-of-line                    # Ctrl+A: beginning of line (W
 bindkey "^E" end-of-line                          # Ctrl+E: end of line (WSL)
 fi
 
+# fix ubuntu24LTS gnome-terminal enter key not working
+bindkey -s "^[OM" "^M"
+
 # Keybinding reminder:
 # Ctrl+U: Clear line up to cursor
 # Ctrl+K: Clear line after cursor
@@ -602,7 +605,7 @@ start_tmux() {
   fi
 }
 
-start_tmux
+# start_tmux
 
 #------------------------------
 # External Configs
