@@ -46,7 +46,14 @@ if [[ -f ~/.zplug/init.zsh ]]; then
 else
   echo "Installing zplug..."
   curl -sL --proto-redir -all,https https://raw.githubusercontent.com/zplug/installer/master/installer.zsh | zsh
-  source ~/.zplug/init.zsh
+  
+  # Check if installation was successful before sourcing
+  if [[ -f ~/.zplug/init.zsh ]]; then
+    source ~/.zplug/init.zsh
+  else
+    echo "zplug installation failed or incomplete. Please restart your shell(use zsh)."
+    return 1
+  fi
 fi
 
 # Load theme and plugins
