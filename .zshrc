@@ -2,9 +2,7 @@
 # File:     .zshrc   ZSH resource file                             #
 # Author: artibix                                          #
 #------------------------------------------------------------------#
-# zmodload zsh/zprof
-# zmodload zsh/datetime
-# starttime=$EPOCHREALTIME
+
 #------------------------------
 # ZSH Core Configuration
 #------------------------------
@@ -167,6 +165,12 @@ export PATH="$YAO_INSTALL/bin:$PATH"
 
 # go
 export PATH="$PATH:$HOME/go/bin"
+
+# nvm
+ export NVM_DIR="$HOME/.nvm"
+  [ -s "/opt/homebrew/opt/nvm/nvm.sh" ] && \. "/opt/homebrew/opt/nvm/nvm.sh"  # This loads nvm
+  [ -s "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm" ] && \. "/opt/homebrew/opt/nvm/etc/bash_completion.d/nvm"  # This loads nvm bash_completion
+
 #------------------------------
 # Keybindings
 #------------------------------
@@ -717,19 +721,6 @@ function y() {
 	fi
 	\rm -f -- "$tmp"
 }
-# endtime=$EPOCHREALTIME
-# loadtime=$(( $endtime - $starttime ))
-#
-# # 根据加载时间选择颜色和图标
-# if (( $loadtime < 0.3 )); then
-#   printf "\033[32m⚡ ZSH启动: %.3f秒\033[0m\n" $loadtime
-# elif (( $loadtime < 0.8 )); then
-#   printf "\033[36m✓ ZSH启动: %.3f秒\033[0m\n" $loadtime
-# elif (( $loadtime < 2.0 )); then
-#   printf "\033[33m⏱ ZSH启动: %.3f秒\033[0m\n" $loadtime
-# else
-#   printf "\033[31m⏰ ZSH启动: %.3f秒\033[0m\n" $loadtime
-# fi
 
 ___MY_VMOPTIONS_SHELL_FILE="${HOME}/.jetbrains.vmoptions.sh"; if [ -f "${___MY_VMOPTIONS_SHELL_FILE}" ]; then . "${___MY_VMOPTIONS_SHELL_FILE}"; fi
 # The following lines have been added by Docker Desktop to enable Docker CLI completions.
@@ -738,3 +729,13 @@ autoload -Uz compinit
 compinit
 # End of Docker CLI completions
 alias config='/usr/bin/git --git-dir=$HOME/.cfg/ --work-tree=$HOME'
+# The following lines have been added by Docker Desktop to enable Docker CLI completions.
+fpath=(/Users/ashark/.docker/completions $fpath)
+autoload -Uz compinit
+compinit
+# End of Docker CLI completions
+
+# zoxide is a smarter cd command, inspired by z and autojump.
+if command -v zoxide >/dev/null 2>&1; then
+  eval "$(zoxide init zsh)"
+fi
