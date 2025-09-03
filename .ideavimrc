@@ -40,27 +40,42 @@ nnoremap <C-k> <C-w>k
 nnoremap L :tabnext<cr>
 nnoremap H :tabprevious<cr>
 
-"" -- map ide actions to ideavim -- https://jb.gg/abva4t
-""" idea specific settings ------------------
-"set ideajoin
-"set ideastatusicon=gray
-"set idearefactormode=keep
-
-""" mappinplug 'preservim/nerdtree'gs --------------------------------
-"map <leader>f <plug>(easymotion-s)
-"map <leader>e <plug>(easymotion-f)
 map <C-space> <action>(EditorSelectWord)
 map <C-/> :shell<cr>
-"nnoremap <BS> <action>(EditorUnSelectWord) " not work
-"map <leader>d <Action>(Debug)
-"map <leader>r <Action>(RenameElement)
-"map <leader>c <Action>(Stop)
-"map <leader>z <Action>(ToggleDistractionFreeMode)
 
-"map <leader>s <Action>(SelectInProjectView)
-"map <leader>a <Action>(Annotate)
-"map <leader>h <Action>(Vcs.ShowTabbedFileHistory)
-"map <S-Space> <Action>(GotoNextError)
+" --------- 文件 / 项目导航 ----------
+" 最近打开文件
+map <leader>fr <action>(RecentFiles)
 
-"map <leader>b <Action>(ToggleLineBreakpoint)
-"map <leader>o <Action>(FileStructurePopup)
+" --------- 代码编辑 ----------
+" 格式化代码
+map <leader>cf <action>(ReformatCode)
+
+" 显示引用（Usages）
+nnoremap <leader>u <action>(FindUsages)
+
+" --------- Git 集成 ----------
+" 显示注释 blame
+map <leader>gb <action>(Annotate)
+
+" 显示 Git 工具窗口
+map <leader>gg <action>(ActivateVersionControlToolWindow)
+
+" --------- 调试 ----------
+" 切换断点
+nnoremap <leader>b <action>(ToggleLineBreakpoint)
+
+" 启动调试
+nnoremap <leader>dd <action>(Debug)
+
+" 启动运行
+nnoremap <leader>dr <action>(Run)
+
+" 停止运行/调试
+nnoremap <leader>ds <action>(Stop)
+
+" --------- 窗口管理 ----------
+
+" --------- 其他 ----------
+" 双空格打开文件搜索
+map <leader><Space> <action>(GotoFile)
