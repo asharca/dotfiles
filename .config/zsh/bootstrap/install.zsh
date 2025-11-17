@@ -63,7 +63,7 @@ echo ""
 # ============================================
 install_tool() {
   local tool="$1"
-  local brew_name="${2:-$tool}"  # 使用第二个参数作为 brew 包名，默认同 tool
+  local brew_name="${2:-$tool}"
   
   if (( $+commands[$tool] )); then
     echo "✓ $tool already installed"
@@ -81,45 +81,151 @@ install_tool() {
 }
 
 # ============================================
-# 3. Install Essential Tools
+# 3. Install Essential Tools (必装)
 # ============================================
 echo "==================================="
-echo "  Checking Essential Tools"
+echo "  Installing Essential Tools"
 echo "==================================="
 echo ""
 
-ESSENTIAL_TOOLS=(
-  "git"
-  "curl"
-  "wget"
-  "zsh"
+# 定义必需工具：command_name:brew_package_name
+declare -A ESSENTIAL_TOOLS=(
+  ["git"]="git"
+  ["gcc"]="gcc"
+  ["make"]="make"
+  ["python3"]="python3"
+  ["nvim"]="neovim"
+  ["tmux"]="tmux"
+  ["zsh"]="zsh"
+  ["unzip"]="unzip"
+  ["go"]="go"
+  ["node"]="node"
+  ["npm"]="node"  # npm comes with node
+  ["fd"]="fd"
+  ["fzf"]="fzf"
+  ["curl"]="curl"
+  ["wget"]="wget"
 )
 
-for tool in "${ESSENTIAL_TOOLS[@]}"; do
-  install_tool "$tool"
+echo "Installing required tools automatically..."
+echo ""
+
+for cmd in ${(k)ESSENTIAL_TOOLS}; do
+  brew_name="${ESSENTIAL_TOOLS[$cmd]}"
+  
+  # Skip npm check since it comes with node
+  if [[ "$cmd" == "npm" ]]; then
+    if (( $+commands[npm] )); then
+      echo "✓ npm already available (installed with node)"
+    fi
+    continue
+  fi
+  
+  install_tool "$cmd" "$brew_name"
 done
 
 echo ""
 
 # ============================================
-# 4. Install Recommended Tools
+# 4. Verify Essential Tools Installation
 # ============================================
 echo "==================================="
-echo "  Checking Recommended Tools"
+echo "  Verifying Installation"
 echo "==================================="
 echo ""
 
-# 定义工具数组：command_name:brew_package_name:description
+MISSING_TOOLS=()
+
+for cmd in ${(k)ESSENTIAL_TOOLS}; do
+  if (( $+commands[$cmd] )); then
+    # Get version info
+    case $cmd in
+      git)
+        version=$(git --version 2>/dev/null | cut -d' ' -f3)
+        echo "✓ $cmd - v$version"
+        ;;
+      gcc)
+        version=$(gcc --version 2>/dev/null | head -n1 | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' | head -n1)
+        echo "✓ $cmd - v$version"
+        ;;
+      make)
+        version=$(make --version 2>/dev/null | head -n1 | grep -oE '[0-9]+\.[0-9]+' | head -n1)
+        echo "✓ $cmd - v$version"
+        ;;
+      python3)
+        version=$(python3 --version 2>/dev/null | cut -d' ' -f2)
+        echo "✓ $cmd - v$version"
+        ;;
+      nvim)
+        version=$(nvim --version 2>/dev/null | head -n1 | cut -d' ' -f2 | sed 's/v//')
+        echo "✓ $cmd - v$version"
+        ;;
+      tmux)
+        version=$(tmux -V 2>/dev/null | cut -d' ' -f2)
+        echo "✓ $cmd - v$version"
+        ;;
+      zsh)
+        version=$(zsh --version 2>/dev/null | cut -d' ' -f2)
+        echo "✓ $cmd - v$version"
+        ;;
+      go)
+        version=$(go version 2>/dev/null | cut -d' ' -f3 | sed 's/go//')
+        echo "✓ $cmd - v$version"
+        ;;
+      node)
+        version=$(node --version 2>/dev/null | sed 's/v//')
+        echo "✓ $cmd - v$version"
+        ;;
+      npm)
+        version=$(npm --version 2>/dev/null)
+        echo "✓ $cmd - v$version"
+        ;;
+      fd)
+        version=$(fd --version 2>/dev/null | cut -d' ' -f2)
+        echo "✓ $cmd - v$version"
+        ;;
+      fzf)
+        version=$(fzf --version 2>/dev/null | cut -d' ' -f1)
+        echo "✓ $cmd - v$version"
+        ;;
+      *)
+        echo "✓ $cmd - installed"
+        ;;
+    esac
+  else
+    echo "✗ $cmd - FAILED TO INSTALL"
+    MISSING_TOOLS+=("$cmd")
+  fi
+done
+
+echo ""
+
+if [[ ${#MISSING_TOOLS[@]} -gt 0 ]]; then
+  echo "⚠️  Warning: The following tools failed to install:"
+  for tool in "${MISSING_TOOLS[@]}"; do
+    echo "   - $tool"
+  done
+  echo ""
+  echo "Please try installing them manually with:"
+  echo "   brew install ${(j: :)MISSING_TOOLS}"
+  echo ""
+fi
+
+# ============================================
+# 5. Install Recommended Tools (可选)
+# ============================================
+echo "==================================="
+echo "  Recommended Tools (Optional)"
+echo "==================================="
+echo ""
+
+# 定义推荐工具数组：command_name:brew_package_name:description
 declare -A RECOMMENDED_TOOLS=(
-  ["fzf"]="fzf:Fuzzy finder for files and commands"
-  ["fd"]="fd:Fast find alternative"
   ["rg"]="ripgrep:Fast grep alternative"
   ["bat"]="bat:Cat with syntax highlighting"
   ["eza"]="eza:Modern ls replacement"
   ["autojump"]="autojump:Smart directory jumper"
   ["zoxide"]="zoxide:Smarter cd command"
-  ["tmux"]="tmux:Terminal multiplexer"
-  ["nvim"]="neovim:Modern vim editor"
   ["ncdu"]="ncdu:Disk usage analyzer"
   ["htop"]="htop:Interactive process viewer"
   ["tldr"]="tldr:Simplified man pages"
@@ -130,8 +236,6 @@ declare -A RECOMMENDED_TOOLS=(
   ["delta"]="git-delta:Syntax-highlighting pager for git"
   ["duf"]="duf:Better df alternative"
   ["procs"]="procs:Modern ps alternative"
-
-  # --- 新增工具 ---
   ["dust"]="dust:Modern du alternative with better visualization"
   ["btop"]="btop:Advanced resource monitor"
   ["httpie"]="httpie:User-friendly HTTP client (curl alternative)"
@@ -141,10 +245,9 @@ declare -A RECOMMENDED_TOOLS=(
   ["yt-dlp"]="yt-dlp:Video downloader (youtube-dl successor)"
   ["bottom"]="bottom:Graphical system monitor (like htop/btop)"
   ["rip"]="rip:Safer rm alternative with trash support"
-  ["fdisk"]="gdu:Fast disk usage analyzer written in Go"
+  ["gdu"]="gdu:Fast disk usage analyzer written in Go"
   ["choose"]="choose:Human-friendly cut alternative"
   ["hyperfine"]="hyperfine:Benchmarking tool for CLI commands"
-  ["choose"]="choose:Cut alternative with intuitive syntax"
   ["pueue"]="pueue:Task scheduler for commands in background"
 )
 
@@ -167,10 +270,10 @@ done
 echo ""
 
 # ============================================
-# 5. Install UV (Python package manager)
+# 6. Install UV (Python package manager)
 # ============================================
 echo "==================================="
-echo "  Checking Python Tools"
+echo "  Python Tools"
 echo "==================================="
 echo ""
 
@@ -201,7 +304,7 @@ fi
 echo ""
 
 # ============================================
-# 6. Install trash-cli (via UV or brew)
+# 7. Install trash-cli (via UV or brew)
 # ============================================
 if (( $+commands[trash-put] )); then
   echo "✓ trash-cli already installed"
@@ -227,33 +330,6 @@ else
       else
         echo "✗ trash-cli installation failed"
       fi
-    fi
-  else
-    echo " - Skipped"
-  fi
-fi
-
-echo ""
-
-# ============================================
-# 7. Install Node.js tools
-# ============================================
-echo "==================================="
-echo "  Checking Node.js Tools"
-echo "==================================="
-echo ""
-
-if (( $+commands[node] )); then
-  echo "✓ Node.js already installed"
-  node --version
-else
-  printf "Install Node.js? [y/N]: "
-  if read -q; then
-    echo ""
-    brew install node
-    if (( $+commands[node] )); then
-      echo "✓ Node.js installed successfully"
-      node --version
     fi
   else
     echo " - Skipped"
@@ -329,7 +405,15 @@ echo "  Installation Summary"
 echo "==================================="
 echo ""
 
-echo "📦 Installed packages via Homebrew:"
+echo "📦 Essential tools installed:"
+for cmd in ${(k)ESSENTIAL_TOOLS}; do
+  if (( $+commands[$cmd] )); then
+    echo "  ✓ $cmd"
+  fi
+done | column -c 80
+echo ""
+
+echo "📦 All Homebrew packages:"
 brew list --formula 2>/dev/null | sort | column -c 80
 echo ""
 
@@ -345,20 +429,18 @@ echo "==================================="
 echo ""
 echo "📋 Next steps:"
 echo "  1. Restart your terminal or run: exec zsh"
-echo "  2. Run 'zsh-doctor' to check your setup"
-echo "  3. Run 'checkproxy' to configure proxy if needed"
-echo "  4. Customize your configuration in ~/.config/zsh/"
+echo "  2. Verify installation: run 'which git python3 node nvim'"
+echo "  3. Configure your shell in ~/.config/zsh/"
 echo ""
 echo "🔧 Useful commands:"
 echo "  brew update          - Update Homebrew"
 echo "  brew upgrade         - Upgrade all packages"
 echo "  brew cleanup         - Remove old versions"
 echo "  brew doctor          - Check for issues"
-echo "  brew list            - List installed packages"
 echo ""
 echo "💡 Tips:"
 echo "  - Use 'fzf' with CTRL+R for command history search"
-echo "  - Use 'z <directory>' for smart directory jumping (zoxide)"
-echo "  - Use 'bat' instead of 'cat' for syntax highlighting"
-echo "  - Use 'eza' or 'ls' for better directory listings"
-echo "  - Use '(tp)trash-put' instead of 'rm' for safe file deletion"
+echo "  - Use 'fd' for fast file searching"
+echo "  - Use 'nvim' for text editing"
+echo "  - Use 'tmux' for terminal multiplexing"
+echo ""
