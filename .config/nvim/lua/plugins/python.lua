@@ -7,7 +7,13 @@ return {
     "mfussenegger/nvim-dap-python", --optional
     { "nvim-telescope/telescope.nvim", branch = "0.1.x", dependencies = { "nvim-lua/plenary.nvim" } },
   },
+<<<<<<< HEAD
   branch = "main",
+=======
+  keys = {
+    { "<leader>cv", "<cmd>VenvSelect<cr>", { desc = "Select VirtualEnv" } },
+  },
+>>>>>>> origin/main
   opts = {
     options = {
       debug = true,
