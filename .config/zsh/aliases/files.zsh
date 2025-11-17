@@ -28,17 +28,16 @@ alias te='trash-empty'
 # Modern ls alternatives
 if (( $+commands[eza] )); then
   # Use eza if available (modern ls replacement)
-  alias ls='eza --color=always --icons'
-  alias ll='eza --color=always --icons -lh'
-  alias la='eza --color=always --icons -lha'
-  alias lt='eza --color=always --icons --tree'
+  alias ls='eza --color=always --icons --group'
+  alias ll='eza --color=always --icons --group -lh'
+  alias la='eza --color=always --icons --group -lha'
+  alias lt='eza --color=always --icons --group --tree'
 else
   # Fallback to standard ls
   alias ls='ls --color=auto -F'
   alias ll='ls --color=auto -lh'
   alias la='ls --color=auto -lha'
 fi
-
 alias lsd='ls -d */'
 
 # Grep and diff with colors

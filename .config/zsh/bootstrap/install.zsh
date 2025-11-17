@@ -244,7 +244,6 @@ declare -A RECOMMENDED_TOOLS=(
   ["fastfetch"]="fastfetch:Faster neofetch alternative"
   ["yt-dlp"]="yt-dlp:Video downloader (youtube-dl successor)"
   ["bottom"]="bottom:Graphical system monitor (like htop/btop)"
-  ["rip"]="rip:Safer rm alternative with trash support"
   ["gdu"]="gdu:Fast disk usage analyzer written in Go"
   ["choose"]="choose:Human-friendly cut alternative"
   ["hyperfine"]="hyperfine:Benchmarking tool for CLI commands"
