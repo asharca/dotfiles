@@ -1,3 +1,5 @@
+# Add deno completions to search path
+if [[ ":$FPATH:" != *":/home/artyang/.zsh/completions:"* ]]; then export FPATH="/home/artyang/.zsh/completions:$FPATH"; fi
 #------------------------------------------------------------------#
 # File:     .zshrc   ZSH resource file                             #
 # Author: artibix                                          #
@@ -600,21 +602,6 @@ start_tmux
 # External Configs
 #------------------------------
 
-# >>> conda initialize >>>
-# !! Contents within this block are managed by 'conda init' !!
-__conda_setup="$('/home/artyang/anaconda3/bin/conda' 'shell.zsh' 'hook' 2> /dev/null)"
-if [ $? -eq 0 ]; then
-    eval "$__conda_setup"
-else
-    if [ -f "/home/artyang/anaconda3/etc/profile.d/conda.sh" ]; then
-        . "/home/artyang/anaconda3/etc/profile.d/conda.sh"
-    else
-        export PATH="/home/artyang/anaconda3/bin:$PATH"
-    fi
-fi
-unset __conda_setup
-# <<< conda initialize <<<
-
 # LM Studio CLI
 export PATH="$PATH:$HOME/.lmstudio/bin"
 
@@ -742,6 +729,4 @@ autoload -Uz compinit
 compinit
 # End of Docker CLI completions
 alias config='/usr/bin/git --git-dir=$HOME/.cfg/ --work-tree=$HOME'
-# export PATH="/home/artyang/anaconda3/bin:$PATH"  # commented out by conda initialize
-#Anacondaexport
-# PATH=$PATH:/home/artyang/anaconda3/bin
+. "/home/artyang/.deno/env"
