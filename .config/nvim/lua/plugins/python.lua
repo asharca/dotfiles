@@ -1,5 +1,6 @@
 return {
   "linux-cultist/venv-selector.nvim",
+  lazy = false,
   dependencies = {
     "neovim/nvim-lspconfig",
     "mfussenegger/nvim-dap",
@@ -10,9 +11,11 @@ return {
     { "<leader>cv", "<cmd>VenvSelect<cr>", { desc = "Select VirtualEnv" } },
   },
   opts = {
+    options = {
+      debug = true,
+    },
     settings = {
       options = {},
-
       search = {
         uv = {
           command = "fd 'bin/python$' /Users/ashark/.local/share/uv/python/ --full-path",
@@ -23,5 +26,4 @@ return {
       },
     },
   },
-  event = "VeryLazy",
 }
