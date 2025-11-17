@@ -70,6 +70,8 @@ zplug 'wting/autojump'
 export DRACULA_DISPLAY_CONTEXT=1
 export DRACULA_DISPLAY_FULL_CWD=1
 
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+
 if (( $+commands[brew] )); then
   [[ -f $(brew --prefix)/etc/profile.d/autojump.sh ]] && . $(brew --prefix)/etc/profile.d/autojump.sh
 elif [[ -f ~/.zsh/autojump/install.py ]]; then
@@ -110,6 +112,12 @@ fi
 if [ ! -d ~/.tmux/plugins/tpm ]; then
   git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
 fi
+
+if [[ -f ~/.deno/env ]]; then
+  . ~/.deno/env
+fi
+# Add deno completions to search path
+if [[ ":$FPATH:" != *":/home/artyang/.zsh/completions:"* ]]; then export FPATH="/home/artyang/.zsh/completions:$FPATH"; fi
 
 export FZF_DEFAULT_COMMAND='fd --type f --hidden --exclude ".git" --exclude "node_modules" . --color=always'
 export FZF_DEFAULT_OPTS='--ansi'
@@ -255,7 +263,9 @@ alias glog='git log --oneline --graph --decorate'
 alias gdiff='git diff'
 
 # File operations (safer defaults)
-# alias rm='echo "This is not the command you are looking for. Use trash-put or rm -i instead."; false'
+alias rm='echo "This is not the command you are looking for. Use tp or rm -i instead."; false'
+curl -LsSf https://astral.sh/uv/install.sh | sh
+uv tool add trash-cli
 alias tp='trash-put'
 alias cp='cp -i'
 alias mv='mv -i'
@@ -617,21 +627,6 @@ start_tmux() {
 #------------------------------
 # External Configs
 #------------------------------
-
-# >>> conda initialize >>>
-# !! Contents within this block are managed by 'conda init' !!
-__conda_setup="$('/opt/anaconda3/bin/conda' 'shell.zsh' 'hook' 2> /dev/null)"
-if [ $? -eq 0 ]; then
-    eval "$__conda_setup"
-else
-    if [ -f "/opt/anaconda3/etc/profile.d/conda.sh" ]; then
-        . "/opt/anaconda3/etc/profile.d/conda.sh"
-    else
-        export PATH="/opt/anaconda3/bin:$PATH"
-    fi
-fi
-unset __conda_setup
-# <<< conda initialize <<<
 
 # LM Studio CLI
 export PATH="$PATH:$HOME/.lmstudio/bin"
