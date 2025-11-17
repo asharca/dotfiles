@@ -1,6 +1,9 @@
 #!/usr/bin/env zsh
 # Tmux Configuration
 
+if [[ "$(uname)" == "Darwin" ]]; then
+  return
+fi
 # 安装 tmux 插件管理器（TPM）
 if [[ ! -d ~/.tmux/plugins/tpm ]]; then
   echo "Installing tmux plugin manager..."
