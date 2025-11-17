@@ -1,6 +1,8 @@
+# Add deno completions to search path
+if [[ ":$FPATH:" != *":/Users/ashark/.zsh/completions:"* ]]; then export FPATH="/Users/ashark/.zsh/completions:$FPATH"; fi
 #------------------------------------------------------------------#
 # File:     .zshrc   ZSH resource file                             #
-# Author: artibix                                          #
+# Author: asharca                                          #
 #------------------------------------------------------------------#
 
 #------------------------------
@@ -143,9 +145,9 @@ export LS_COLORS='rs=0:di=01;34:ln=01;36:pi=40;33:so=01;35:do=01;35:bd=40;33;01:
 #------------------------------
 
 # Node.js / npm
-export NPM_PACKAGES="${HOME}/.npm-global"
-npm config set prefix $NPM_PACKAGES
-export PATH="$PATH:$NPM_PACKAGES/bin"
+# export NPM_PACKAGES="${HOME}/.npm-global"
+# npm config set prefix $NPM_PACKAGES
+# export PATH="$PATH:$NPM_PACKAGES/bin"
 
 # Yarn
 export PATH="$PATH:$HOME/.yarn/bin"
@@ -166,6 +168,8 @@ export PATH="$YAO_INSTALL/bin:$PATH"
 # go
 export PATH="$PATH:$HOME/go/bin"
 
+# rust
+export PATH="$PATH:$HOME/.cargo/env"
 # nvm
  export NVM_DIR="$HOME/.nvm"
   [ -s "/opt/homebrew/opt/nvm/nvm.sh" ] && \. "/opt/homebrew/opt/nvm/nvm.sh"  # This loads nvm
@@ -267,6 +271,7 @@ alias explorer='explorer.exe'             # Windows Explorer
 # Development
 alias sail='bash vendor/bin/sail'         # Laravel Sail
 alias nv='nvim'                           # Neovim
+alias vim='nvim'                           # Neovim
 
 # Networking
 alias ports='netstat -tulan'             # Show open ports
@@ -529,6 +534,7 @@ fi
 autoload -U promptinit
 promptinit
 zmodload zsh/complist
+fpath=(~/.zsh $fpath)
 autoload -Uz compinit
 compinit
 zstyle :compinstall filename '${HOME}/.zshrc'
@@ -619,7 +625,7 @@ unset __conda_setup
 export PATH="$PATH:$HOME/.lmstudio/bin"
 
 # Initialize proxy by default (comment out if not needed)
-setproxy
+# setproxy
 
 # 使用asciinema录制终端会话
 record-terminal() {
@@ -739,3 +745,4 @@ compinit
 if command -v zoxide >/dev/null 2>&1; then
   eval "$(zoxide init zsh)"
 fi
+. "/Users/ashark/.deno/env"
