@@ -1,9 +1,8 @@
-# Add deno completions to search path
-if [[ ":$FPATH:" != *":/home/artyang/.zsh/completions:"* ]]; then export FPATH="/home/artyang/.zsh/completions:$FPATH"; fi
 #------------------------------------------------------------------#
 # File:     .zshrc   ZSH resource file                             #
 # Author: artibix                                          #
 #------------------------------------------------------------------#
+
 # zmodload zsh/zprof
 # zmodload zsh/datetime
 # starttime=$EPOCHREALTIME
@@ -47,7 +46,14 @@ if [[ -f ~/.zplug/init.zsh ]]; then
 else
   echo "Installing zplug..."
   curl -sL --proto-redir -all,https https://raw.githubusercontent.com/zplug/installer/master/installer.zsh | zsh
-  source ~/.zplug/init.zsh
+  
+  # Check if installation was successful before sourcing
+  if [[ -f ~/.zplug/init.zsh ]]; then
+    source ~/.zplug/init.zsh
+  else
+    echo "zplug installation failed or incomplete. Please restart your shell(use zsh)."
+    return 1
+  fi
 fi
 
 # Load theme and plugins
@@ -64,16 +70,20 @@ zplug 'wting/autojump'
 export DRACULA_DISPLAY_CONTEXT=1
 export DRACULA_DISPLAY_FULL_CWD=1
 
-if [[ -f ~/.autojump/etc/profile.d/autojump.sh ]]; then
+/bin/bash -c "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/HEAD/install.sh)"
+
+if (( $+commands[brew] )); then
+  [[ -f $(brew --prefix)/etc/profile.d/autojump.sh ]] && . $(brew --prefix)/etc/profile.d/autojump.sh
+elif [[ -f ~/.zsh/autojump/install.py ]]; then
   . ~/.autojump/etc/profile.d/autojump.sh
 else
   echo "autojump 未安装，尝试通过 git 安装..."
   git clone https://github.com/wting/autojump.git ~/.zsh/autojump
-  cd ~/.zsh/autojump && ./install.py
+  cd ~/.zsh/autojump/ && ./install.py
   . ~/.autojump/etc/profile.d/autojump.sh
+  cd ~
 fi
 
-# install plugins if needed
 if ! zplug check; then
     printf "install missing plugins? [y/n]: "
     if read -q; then
@@ -81,7 +91,6 @@ if ! zplug check; then
     fi
 fi
 
-# load plugins
 zplug load
 
 #------------------------------
@@ -99,6 +108,16 @@ if [[ -f ~/.fzf.zsh ]]; then
 else
   git clone --depth 1 https://github.com/junegunn/fzf.git ~/.fzf && ~/.fzf/install
 fi
+
+if [ ! -d ~/.tmux/plugins/tpm ]; then
+  git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
+fi
+
+if [[ -f ~/.deno/env ]]; then
+  . ~/.deno/env
+fi
+# Add deno completions to search path
+if [[ ":$FPATH:" != *":/home/artyang/.zsh/completions:"* ]]; then export FPATH="/home/artyang/.zsh/completions:$FPATH"; fi
 
 export FZF_DEFAULT_COMMAND='fd --type f --hidden --exclude ".git" --exclude "node_modules" . --color=always'
 export FZF_DEFAULT_OPTS='--ansi'
@@ -146,7 +165,9 @@ export LS_COLORS='rs=0:di=01;34:ln=01;36:pi=40;33:so=01;35:do=01;35:bd=40;33;01:
 
 # Node.js / npm
 export NPM_PACKAGES="${HOME}/.npm-global"
-npm config set prefix $NPM_PACKAGES
+if command -v npm >/dev/null 2>&1; then
+    npm config set prefix "$NPM_PACKAGES"
+fi
 export PATH="$PATH:$NPM_PACKAGES/bin"
 
 # Yarn
@@ -203,6 +224,9 @@ bindkey "^A" beginning-of-line                    # Ctrl+A: beginning of line (W
 bindkey "^E" end-of-line                          # Ctrl+E: end of line (WSL)
 fi
 
+# fix ubuntu24LTS gnome-terminal enter key not working
+bindkey -s "^[OM" "^M"
+
 # Keybinding reminder:
 # Ctrl+U: Clear line up to cursor
 # Ctrl+K: Clear line after cursor
@@ -239,7 +263,9 @@ alias glog='git log --oneline --graph --decorate'
 alias gdiff='git diff'
 
 # File operations (safer defaults)
-# alias rm='echo "This is not the command you are looking for. Use trash-put or rm -i instead."; false'
+alias rm='echo "This is not the command you are looking for. Use tp or rm -i instead."; false'
+curl -LsSf https://astral.sh/uv/install.sh | sh
+uv tool add trash-cli
 alias tp='trash-put'
 alias cp='cp -i'
 alias mv='mv -i'
@@ -596,7 +622,7 @@ start_tmux() {
   fi
 }
 
-start_tmux
+# start_tmux
 
 #------------------------------
 # External Configs
@@ -729,4 +755,3 @@ autoload -Uz compinit
 compinit
 # End of Docker CLI completions
 alias config='/usr/bin/git --git-dir=$HOME/.cfg/ --work-tree=$HOME'
-. "/home/artyang/.deno/env"
