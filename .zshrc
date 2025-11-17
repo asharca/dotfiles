@@ -265,7 +265,7 @@ alias gdiff='git diff'
 # File operations (safer defaults)
 alias rm='echo "This is not the command you are looking for. Use tp or rm -i instead."; false'
 curl -LsSf https://astral.sh/uv/install.sh | sh
-uv tool add trash-cli
+uv tool install trash-cli
 alias tp='trash-put'
 alias cp='cp -i'
 alias mv='mv -i'
