@@ -91,7 +91,6 @@ echo ""
 # 定义必需工具：command_name:brew_package_name
 declare -A ESSENTIAL_TOOLS=(
   ["git"]="git"
-  ["gcc"]="gcc"
   ["make"]="make"
   ["python3"]="python3"
   ["nvim"]="neovim"
@@ -142,14 +141,6 @@ for cmd in ${(k)ESSENTIAL_TOOLS}; do
     case $cmd in
       git)
         version=$(git --version 2>/dev/null | cut -d' ' -f3)
-        echo "✓ $cmd - v$version"
-        ;;
-      gcc)
-        version=$(gcc --version 2>/dev/null | head -n1 | grep -oE '[0-9]+\.[0-9]+\.[0-9]+' | head -n1)
-        echo "✓ $cmd - v$version"
-        ;;
-      make)
-        version=$(make --version 2>/dev/null | head -n1 | grep -oE '[0-9]+\.[0-9]+' | head -n1)
         echo "✓ $cmd - v$version"
         ;;
       python3)
