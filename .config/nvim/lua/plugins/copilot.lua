@@ -1,5 +1,6 @@
 return {
   "zbirenbaum/copilot.lua",
+  enabled = vim.loop.os_uname().sysname == "Darwin",
   cmd = "Copilot",
   event = "InsertEnter",
   config = function()
