@@ -130,6 +130,22 @@ declare -A RECOMMENDED_TOOLS=(
   ["delta"]="git-delta:Syntax-highlighting pager for git"
   ["duf"]="duf:Better df alternative"
   ["procs"]="procs:Modern ps alternative"
+
+  # --- 新增工具 ---
+  ["dust"]="dust:Modern du alternative with better visualization"
+  ["btop"]="btop:Advanced resource monitor"
+  ["httpie"]="httpie:User-friendly HTTP client (curl alternative)"
+  ["glow"]="glow:Render markdown in the terminal"
+  ["neofetch"]="neofetch:System info display"
+  ["fastfetch"]="fastfetch:Faster neofetch alternative"
+  ["yt-dlp"]="yt-dlp:Video downloader (youtube-dl successor)"
+  ["bottom"]="bottom:Graphical system monitor (like htop/btop)"
+  ["rip"]="rip:Safer rm alternative with trash support"
+  ["fdisk"]="gdu:Fast disk usage analyzer written in Go"
+  ["choose"]="choose:Human-friendly cut alternative"
+  ["hyperfine"]="hyperfine:Benchmarking tool for CLI commands"
+  ["choose"]="choose:Cut alternative with intuitive syntax"
+  ["pueue"]="pueue:Task scheduler for commands in background"
 )
 
 for cmd in ${(k)RECOMMENDED_TOOLS}; do
