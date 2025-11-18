@@ -39,3 +39,20 @@ alias psc='ps aux | sort -k3 -r | head -10'  # Top 10 CPU-consuming processes
 # System monitoring
 alias freq='cat /proc/cpuinfo | grep "MHz"'
 alias temp='sensors 2>/dev/null || echo "lm-sensors not installed"'
+
+case "$OSTYPE" in
+  darwin*)
+    alias copy="pbcopy"
+    ;;
+  linux*)
+    alias copy="kitty +kitten clipboard"
+    ;;
+esac
+
+ssh() {
+    if command -v kitty >/dev/null 2>&1; then
+        kitty +kitten ssh "$@"
+    else
+        command ssh "$@"
+    fi
+}
