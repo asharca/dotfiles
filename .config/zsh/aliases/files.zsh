@@ -21,9 +21,7 @@ if ! (( $+commands[trash-put] )); then
 fi
 
 alias tp='trash-put'
-alias tl='trash-list'
-alias tr='trash-restore'
-alias te='trash-empty'
+alias cat='bat'
 
 # Modern ls alternatives
 if (( $+commands[eza] )); then

@@ -16,11 +16,12 @@ if [[ -f ~/.zplug/init.zsh ]]; then
   zplug 'zsh-users/zsh-autosuggestions'
   zplug 'zsh-users/zsh-syntax-highlighting', defer:2
   zplug 'zsh-users/zsh-completions'
-  zplug 'zsh-users/zsh-history-substring-search'
   zplug 'supercrabtree/k'
   zplug 'MichaelAquilina/zsh-you-should-use'
   zplug 'junegunn/fzf'
-  
+  zplug "marlonrichert/zsh-autocomplete"
+  zplug "Aloxaf/fzf-tab"
+
   # 检查并安装缺失的插件
   if ! zplug check; then
     printf "Install missing plugins? [y/n]: "

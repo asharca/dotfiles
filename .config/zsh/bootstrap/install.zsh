@@ -215,9 +215,7 @@ declare -A RECOMMENDED_TOOLS=(
   ["rg"]="ripgrep:Fast grep alternative"
   ["bat"]="bat:Cat with syntax highlighting"
   ["eza"]="eza:Modern ls replacement"
-  ["autojump"]="autojump:Smart directory jumper"
   ["zoxide"]="zoxide:Smarter cd command"
-  ["ncdu"]="ncdu:Disk usage analyzer"
   ["htop"]="htop:Interactive process viewer"
   ["tldr"]="tldr:Simplified man pages"
   ["tree"]="tree:Directory tree viewer"
@@ -231,14 +229,13 @@ declare -A RECOMMENDED_TOOLS=(
   ["btop"]="btop:Advanced resource monitor"
   ["httpie"]="httpie:User-friendly HTTP client (curl alternative)"
   ["glow"]="glow:Render markdown in the terminal"
-  ["neofetch"]="neofetch:System info display"
   ["fastfetch"]="fastfetch:Faster neofetch alternative"
   ["yt-dlp"]="yt-dlp:Video downloader (youtube-dl successor)"
   ["bottom"]="bottom:Graphical system monitor (like htop/btop)"
-  ["gdu"]="gdu:Fast disk usage analyzer written in Go"
-  ["choose"]="choose:Human-friendly cut alternative"
+  ["choose-rust"]="choose:Human-friendly cut alternative"
   ["hyperfine"]="hyperfine:Benchmarking tool for CLI commands"
   ["pueue"]="pueue:Task scheduler for commands in background"
+  ["corc"]="croc is a tool that allows any two computers to simply and securely transfer files and folders."
 )
 
 for cmd in ${(k)RECOMMENDED_TOOLS}; do

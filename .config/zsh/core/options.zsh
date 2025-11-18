@@ -8,7 +8,7 @@ bindkey -e
 setopt AUTO_CD
 
 # 更正拼写错误
-setopt CORRECT
+# setopt CORRECT
 
 # 后台任务以较低优先级运行
 setopt NO_BG_NICE
