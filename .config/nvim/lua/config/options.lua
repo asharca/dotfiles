@@ -8,3 +8,4 @@
 -- vim.g.lazyvim_python_ruff = "ruff"
 vim.opt.spelllang = { "en", "cjk" }
 vim.g.maplocalleader = ","
+vim.g["suda#noninteractive"] = 1
