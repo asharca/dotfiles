@@ -19,7 +19,7 @@ if [[ -f ~/.zplug/init.zsh ]]; then
   zplug 'supercrabtree/k'
   zplug 'MichaelAquilina/zsh-you-should-use'
   zplug 'junegunn/fzf'
-  zplug "marlonrichert/zsh-autocomplete"
+  # zplug "marlonrichert/zsh-autocomplete"
   zplug "Aloxaf/fzf-tab"
 
   # 检查并安装缺失的插件
