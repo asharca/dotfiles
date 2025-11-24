@@ -9,3 +9,4 @@
 vim.opt.spelllang = { "en", "cjk" }
 vim.g.maplocalleader = ","
 vim.g["suda#noninteractive"] = 1
+vim.opt.conceallevel = 0
