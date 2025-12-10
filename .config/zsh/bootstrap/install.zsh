@@ -231,11 +231,11 @@ declare -A RECOMMENDED_TOOLS=(
   ["glow"]="glow:Render markdown in the terminal"
   ["fastfetch"]="fastfetch:Faster neofetch alternative"
   ["yt-dlp"]="yt-dlp:Video downloader (youtube-dl successor)"
-  ["bottom"]="bottom:Graphical system monitor (like htop/btop)"
-  ["choose-rust"]="choose:Human-friendly cut alternative"
   ["hyperfine"]="hyperfine:Benchmarking tool for CLI commands"
   ["pueue"]="pueue:Task scheduler for commands in background"
-  ["corc"]="croc is a tool that allows any two computers to simply and securely transfer files and folders."
+  ["croc"]="croc:A tool that allows any two computers to simply and securely transfer files and folders."
+  ["ncdu"]="ncdu:Better disk usage analyzer"
+  ["luarocks"]="luarocks:Package manager for Lua modules"
 )
 
 for cmd in ${(k)RECOMMENDED_TOOLS}; do

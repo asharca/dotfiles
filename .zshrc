@@ -60,3 +60,9 @@ load_config "$ZSH_CONFIG_DIR/core/completion.zsh"
 
 # JetBrains vmoptions
 [[ -f "${HOME}/.jetbrains.vmoptions.sh" ]] && source "${HOME}/.jetbrains.vmoptions.sh"
+
+# Initialize zoxide
+eval "$(zoxide init zsh)"
+
+# Added by Antigravity
+export PATH="/Users/ashark/.antigravity/antigravity/bin:$PATH"

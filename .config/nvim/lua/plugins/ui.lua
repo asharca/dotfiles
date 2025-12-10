@@ -1,6 +1,12 @@
 return {
   {
     "snacks.nvim",
+    keys = {
+      { "<leader>e", false },
+      { "<leader>E", false },
+      { "<leader>fe", false },
+      { "<leader>fE", false },
+    },
     opts = function(_, opts)
       opts.dashboard = {
         width = 40,
