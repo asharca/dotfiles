@@ -2,7 +2,7 @@
 # File Operation Aliases
 
 # Safer defaults with confirmations
-alias rm='echo "This is not the command you are looking for. Use tp or trash-put instead."; false'
+# alias rm='echo "This is not the command you are looking for. Use tp or trash-put instead."; false'
 alias cp='cp -i'
 alias mv='mv -i'
 

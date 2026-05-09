@@ -1,8 +1,8 @@
 #!/usr/bin/env zsh
 # PATH Configuration
 
-# Local bin
 export PATH="$HOME/.local/bin:$PATH"
+export PATH="$HOME/.npm-global/bin:$PATH"
 
 
 # Zoxide (smarter cd)

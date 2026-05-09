@@ -13,14 +13,15 @@ if [[ -f ~/.zplug/init.zsh ]]; then
   
   # 插件列表
   zplug 'dracula/zsh', as:theme
-  zplug 'zsh-users/zsh-autosuggestions'
-  zplug 'zsh-users/zsh-syntax-highlighting', defer:2
   zplug 'zsh-users/zsh-completions'
   zplug 'supercrabtree/k'
   zplug 'MichaelAquilina/zsh-you-should-use'
   zplug 'junegunn/fzf'
   # zplug "marlonrichert/zsh-autocomplete"
   zplug "Aloxaf/fzf-tab"
+  # zplug "jeffreytse/zsh-vi-mode"
+  zplug 'zsh-users/zsh-autosuggestions'
+  zplug 'zsh-users/zsh-syntax-highlighting', defer:2
 
   # 检查并安装缺失的插件
   if ! zplug check; then

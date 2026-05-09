@@ -64,5 +64,10 @@ load_config "$ZSH_CONFIG_DIR/core/completion.zsh"
 # Initialize zoxide
 eval "$(zoxide init zsh)"
 
-# Added by Antigravity
-export PATH="/Users/ashark/.antigravity/antigravity/bin:$PATH"
+# bun completions
+[ -s "${HOME}/.bun/_bun" ] && source "${HOME}/.bun/_bun"
+
+# bun
+export BUN_INSTALL="$HOME/.bun"
+export PATH="$BUN_INSTALL/bin:$PATH"
+export PATH="/opt/homebrew/opt/trash-cli/bin:$PATH"

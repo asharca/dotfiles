@@ -3,12 +3,11 @@ local leet_arg = "leetcode.nvim"
 return {
   "kawre/leetcode.nvim",
   cmd = "Leet",
-  enabled = vim.loop.os_uname().sysname == "Darwin",
+  enabled = vim.uv.os_uname().sysname == "Darwin",
   build = ":TSUpdate html", -- if you have `nvim-treesitter` installed
   lazy = leet_arg ~= vim.fn.argv(0, -1),
   dependencies = {
-    "nvim-telescope/telescope.nvim",
-    -- "ibhagwan/fzf-lua",
+    "ibhagwan/fzf-lua",
     "nvim-lua/plenary.nvim",
     "MunifTanjim/nui.nvim",
   },
