@@ -61,6 +61,26 @@ expected_commit="$(git ls-remote https://github.com/asharca/dotfiles.git refs/he
 
 > 直接执行远端脚本表示信任该 Gist 和 dotfiles 仓库。如需先审查内容，请先用 `curl -o` 下载后再执行。
 
+## 更新现有安装
+
+安装器在发现有效的 `~/.cfg` 时会复用并验证它，但不会自动拉取远端更新。先确认工作区没有未提交的修改，再使用 fast-forward 更新，避免意外产生 merge commit：
+
+```bash
+config status --short
+config pull --ff-only origin main
+exec zsh
+```
+
+如果当前 shell 还没有加载 `config` 函数，可以直接使用完整命令：
+
+```bash
+/usr/bin/git --git-dir="$HOME/.cfg" --work-tree="$HOME" \
+  pull --ff-only origin main
+exec zsh
+```
+
+如果 `config status --short` 显示本地修改，请先提交修改或手动处理冲突，再执行更新。若本次更新改动了软件包或 zplug 插件声明，请在拉取后重新执行上方对应的 `dev` 或 `server` 安装命令，以补齐依赖。
+
 ## 管理配置
 
 安装后使用 `config` 函数操作 bare repository：
