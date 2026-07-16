@@ -1,38 +1,39 @@
 #!/usr/bin/env zsh
 # Plugin Manager - zplug
 
-# zplug 安装检查
-if [[ ! -f ~/.zplug/init.zsh ]]; then
-  echo "Installing zplug..."
-  curl -sL --proto-redir -all,https https://raw.githubusercontent.com/zplug/installer/master/installer.zsh | zsh
-fi
+# Load zplug only when it is already installed. Shell startup must not mutate
+# the machine or pause for installation input.
+if [[ -r "$HOME/.zplug/init.zsh" ]]; then
+  # zplug otherwise runs an early compinit merely to discover its own
+  # completion, then runs compinit again after loading plugin fpaths.
+  if [[ -r "$HOME/.zplug/misc/completions/_zplug" ]]; then
+    fpath=("$HOME/.zplug/misc/completions" $fpath)
+    autoload -Uz _zplug
+  fi
 
-# 加载 zplug
-if [[ -f ~/.zplug/init.zsh ]]; then
-  source ~/.zplug/init.zsh
+  source "$HOME/.zplug/init.zsh"
   
   # 插件列表
   zplug 'dracula/zsh', as:theme
   zplug 'zsh-users/zsh-completions'
   zplug 'supercrabtree/k'
   zplug 'MichaelAquilina/zsh-you-should-use'
-  zplug 'junegunn/fzf'
   # zplug "marlonrichert/zsh-autocomplete"
-  zplug "Aloxaf/fzf-tab"
+  # fzf-tab must load after compinit and before plugins that wrap ZLE widgets.
+  zplug "Aloxaf/fzf-tab", defer:2
   # zplug "jeffreytse/zsh-vi-mode"
-  zplug 'zsh-users/zsh-autosuggestions'
-  zplug 'zsh-users/zsh-syntax-highlighting', defer:2
+  zplug 'zsh-users/zsh-autosuggestions', defer:3
+  zplug 'zsh-users/zsh-syntax-highlighting', defer:3
 
-  # 检查并安装缺失的插件
-  if ! zplug check; then
-    printf "Install missing plugins? [y/n]: "
-    if read -q; then
-      echo
-      zplug install
+  if [[ "${ZDOTFILES_BOOTSTRAP:-0}" == "1" ]]; then
+    if ! zplug check; then
+      print -- "Installing declared zplug plugins..."
+      zplug install || return 1
     fi
+    zplug check || return 1
+  else
+    zplug load
   fi
-  
-  zplug load
-else
-  echo "Warning: zplug installation failed. Please restart your shell." >&2
+elif [[ -o interactive ]]; then
+  print -u2 -- "zsh: optional zplug plugins skipped; run the dotfiles bootstrap to install zplug."
 fi

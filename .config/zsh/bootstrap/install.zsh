@@ -198,7 +198,6 @@ declare -A COMMON_TOOLS=(
   ["glow"]="glow"
   ["fastfetch"]="fastfetch"
   ["hyperfine"]="hyperfine"
-  ["pueue"]="pueue"
   ["croc"]="croc"
   ["ncdu"]="ncdu"
   ["luarocks"]="luarocks"
@@ -289,21 +288,69 @@ echo "  Post-installation Setup"
 echo "==================================="
 echo ""
 
-if (( $+commands[fzf] )) && [[ ! -f ~/.fzf.zsh ]]; then
-  echo "Setting up FZF key bindings..."
-  $(brew --prefix)/opt/fzf/install --key-bindings --completion --no-update-rc
-  echo "✓ FZF configured"
-elif (( $+commands[fzf] )); then
-  echo "✓ FZF already configured"
+install_shell_plugins() {
+  local zplug_dir="$HOME/.zplug"
+  local zplug_init="$zplug_dir/init.zsh"
+  local zplug_config="$HOME/.config/zsh/preload/zplug.zsh"
+  local tpm_dir="$HOME/.tmux/plugins/tpm"
+  local source_rc=0
+
+  if [[ ! -r "$zplug_init" ]]; then
+    if [[ -e "$zplug_dir" ]]; then
+      echo "✗ $zplug_dir exists but does not contain a readable init.zsh"
+      return 1
+    fi
+    echo "Installing zplug..."
+    git clone --depth 1 https://github.com/zplug/zplug.git "$zplug_dir" || return 1
+  else
+    echo "✓ zplug already installed"
+  fi
+
+  [[ -r "$zplug_config" ]] || {
+    echo "✗ Missing zplug declarations: $zplug_config"
+    return 1
+  }
+
+  export ZDOTFILES_BOOTSTRAP=1
+  source "$zplug_config"
+  source_rc=$?
+  unset ZDOTFILES_BOOTSTRAP
+  (( source_rc == 0 )) || return "$source_rc"
+  echo "✓ zplug plugins installed"
+
+  if [[ ! -x "$tpm_dir/tpm" ]]; then
+    if [[ -e "$tpm_dir" ]]; then
+      echo "✗ $tpm_dir exists but does not contain an executable TPM"
+      return 1
+    fi
+    echo "Installing tmux plugin manager..."
+    mkdir -p "${tpm_dir:h}"
+    git clone --depth 1 https://github.com/tmux-plugins/tpm.git "$tpm_dir" || return 1
+  else
+    echo "✓ tmux plugin manager already installed"
+  fi
+
+  if [[ -x "$tpm_dir/bin/install_plugins" ]]; then
+    "$tpm_dir/bin/install_plugins" || return 1
+    echo "✓ tmux plugins installed"
+  fi
+}
+
+if ! install_shell_plugins; then
+  echo ""
+  echo "Error: shell plugin installation failed."
+  exit 1
+fi
+unset -f install_shell_plugins
+
+echo ""
+
+if (( $+commands[fzf] )); then
+  echo "✓ FZF native shell integration is loaded by the modular zsh config"
 fi
 
-if (( $+commands[zoxide] )) && ! grep -q "zoxide init" ~/.zshrc 2>/dev/null; then
-  echo "" >> ~/.zshrc
-  echo "# Initialize zoxide" >> ~/.zshrc
-  echo 'eval "$(zoxide init zsh)"' >> ~/.zshrc
-  echo "✓ zoxide initialization added to .zshrc"
-elif (( $+commands[zoxide] )); then
-  echo "✓ zoxide already configured"
+if (( $+commands[zoxide] )); then
+  echo "✓ Zoxide is loaded by the modular zsh config"
 fi
 
 if [[ "$SHELL" != *"zsh"* ]]; then
