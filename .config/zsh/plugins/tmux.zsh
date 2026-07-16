@@ -4,11 +4,8 @@
 if [[ "$(uname)" == "Darwin" ]]; then
   return
 fi
-# 安装 tmux 插件管理器（TPM）
-if [[ ! -d ~/.tmux/plugins/tpm ]]; then
-  echo "Installing tmux plugin manager..."
-  git clone https://github.com/tmux-plugins/tpm ~/.tmux/plugins/tpm
-fi
+
+# TPM and its plugins are installed by bootstrap. Shell startup stays read-only.
 
 # 智能启动 tmux
 start_tmux() {
