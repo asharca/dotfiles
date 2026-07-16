@@ -1,0 +1,44 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "permission": {
+    "question": "allow",
+    "websearch": "allow",
+    "webfetch": "allow",
+    "todowrite": "allow",
+  },
+  "plugin": [
+    "superpowers@git+https://github.com/obra/superpowers.git"
+  ],
+  "provider": {
+    "faker": {
+      "name": "faker",
+      "npm": "@ai-sdk/openai-compatible",
+      "options": {
+        "baseURL": "https://faker-model.rhzy.ai/v1"
+      },
+      "models": {
+        "minimax/MiniMax-M3": {
+          "name": "minimax/MiniMax-M3",
+          "limit": {
+            "context": 200000,
+            "output": 65536
+          }
+        },
+        "kimi/Kimi-k2.6": {
+          "name": "kimi/Kimi-k2.6",
+          "limit": {
+            "context": 200000,
+            "output": 65536
+          }
+        },
+        "vllm/gemma-4-31b-it-uncensored-awq": {
+          "name": "vllm/gemma-4-31b-it-uncensored-awq",
+          "limit": {
+            "context": 200000,
+            "output": 65536
+          }
+        }
+      }
+    }
+  }
+}
