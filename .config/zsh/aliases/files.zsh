@@ -6,22 +6,14 @@
 alias cp='cp -i'
 alias mv='mv -i'
 
-# Trash-cli setup (安全的删除替代方案)
-if ! (( $+commands[trash-put] )); then
-  if (( $+commands[uv] )); then
-    echo "Installing trash-cli via uv..."
-    uv tool install trash-cli
-  elif (( $+commands[brew] )); then
-    echo "Installing trash-cli via Homebrew..."
-    brew install trash-cli
-  elif (( $+commands[pip3] )); then
-    echo "Installing trash-cli via pip..."
-    pip3 install --user trash-cli
-  fi
+# Optional tools are loaded only when already installed.
+if (( $+commands[trash-put] )); then
+  alias tp='trash-put'
+elif [[ -o interactive ]]; then
+  print -u2 -- "zsh: optional command 'trash-put' unavailable; 'tp' was not defined."
 fi
 
-alias tp='trash-put'
-alias cat='bat'
+(( $+commands[bat] )) && alias cat='bat'
 
 # Modern ls alternatives
 if (( $+commands[eza] )); then
@@ -32,9 +24,15 @@ if (( $+commands[eza] )); then
   alias lt='eza --color=always --icons --group --tree'
 else
   # Fallback to standard ls
-  alias ls='ls --color=auto -F'
-  alias ll='ls --color=auto -lh'
-  alias la='ls --color=auto -lha'
+  if [[ "$OSTYPE" == darwin* ]]; then
+    alias ls='ls -G -F'
+    alias ll='ls -G -lh'
+    alias la='ls -G -lha'
+  else
+    alias ls='ls --color=auto -F'
+    alias ll='ls --color=auto -lh'
+    alias la='ls --color=auto -lha'
+  fi
 fi
 alias lsd='ls -d */'
 
