@@ -14,3 +14,12 @@ vim.api.nvim_create_autocmd({ "BufRead", "BufNewFile" }, {
   end,
 })
 vim.g.autoformat = false
+
+-- 进入终端缓冲区时自动进入 insert（terminal）模式
+vim.api.nvim_create_autocmd({ "TermOpen", "BufEnter", "WinEnter" }, {
+  callback = function(ev)
+    if vim.bo[ev.buf].buftype == "terminal" then
+      vim.cmd.startinsert()
+    end
+  end,
+})
