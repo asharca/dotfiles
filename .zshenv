@@ -48,6 +48,7 @@ _zshenv_path_prepend "$ZEROBREW_PREFIX/bin"
 # system-wide Linuxbrew, and a per-user Linuxbrew install.
 typeset _homebrew_prefix=""
 for _homebrew_candidate in \
+  "${HOMEBREW_PREFIX:-}" \
   /opt/homebrew \
   /usr/local \
   /home/linuxbrew/.linuxbrew \
