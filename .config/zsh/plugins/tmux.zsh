@@ -1,7 +1,7 @@
 #!/usr/bin/env zsh
 # Tmux Configuration
 
-if [[ "$(uname)" == "Darwin" ]]; then
+if [[ "$OSTYPE" == darwin* ]]; then
   return
 fi
 
@@ -22,19 +22,21 @@ start_tmux() {
   [[ "$TERMINAL_EMULATOR" == "JetBrains-JediTerm" ]] && return
 
   # 检查父进程
-  local parent_process=$(ps -o comm= -p $PPID 2>/dev/null)
+  local parent_process="$(ps -o comm= -p "$PPID" 2>/dev/null)"
   [[ "$parent_process" == *nvim* || "$parent_process" == *vim* ]] && return
 
   # 必须是交互式终端
   [[ -t 1 ]] || return
 
-  # 连接或创建 tmux 会话
-  if tmux ls &>/dev/null; then
-    local first_session=$(tmux ls | head -n 1 | cut -d: -f1)
+  # 只查询一次会话列表，然后连接或创建会话。
+  local first_session
+  first_session="$(tmux list-sessions -F '#S' 2>/dev/null | command head -n 1)"
+  if [[ -n "$first_session" ]]; then
     tmux attach-session -t "$first_session"
   else
-    tmux
+    tmux new-session
   fi
 }
 
-start_tmux
+# Automatic attach changes terminal ownership, so keep it explicitly opt-in.
+[[ "${ZSH_AUTO_TMUX:-0}" == "1" ]] && start_tmux

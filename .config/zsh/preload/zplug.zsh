@@ -1,39 +1,35 @@
 #!/usr/bin/env zsh
-# Plugin Manager - zplug
+# Bootstrap-only plugin declarations. Interactive startup uses plugins.zsh and
+# never sources zplug itself.
 
-# Load zplug only when it is already installed. Shell startup must not mutate
-# the machine or pause for installation input.
-if [[ -r "$HOME/.zplug/init.zsh" ]]; then
-  # zplug otherwise runs an early compinit merely to discover its own
-  # completion, then runs compinit again after loading plugin fpaths.
-  if [[ -r "$HOME/.zplug/misc/completions/_zplug" ]]; then
-    fpath=("$HOME/.zplug/misc/completions" $fpath)
-    autoload -Uz _zplug
-  fi
-
-  source "$HOME/.zplug/init.zsh"
-  
-  # 插件列表
-  zplug 'dracula/zsh', as:theme
-  zplug 'zsh-users/zsh-completions'
-  zplug 'supercrabtree/k'
-  zplug 'MichaelAquilina/zsh-you-should-use'
-  # zplug "marlonrichert/zsh-autocomplete"
-  # fzf-tab must load after compinit and before plugins that wrap ZLE widgets.
-  zplug "Aloxaf/fzf-tab", defer:2
-  # zplug "jeffreytse/zsh-vi-mode"
-  zplug 'zsh-users/zsh-autosuggestions', defer:3
-  zplug 'zsh-users/zsh-syntax-highlighting', defer:3
-
-  if [[ "${ZDOTFILES_BOOTSTRAP:-0}" == "1" ]]; then
-    if ! zplug check; then
-      print -- "Installing declared zplug plugins..."
-      zplug install || return 1
-    fi
-    zplug check || return 1
-  else
-    zplug load
-  fi
-elif [[ -o interactive ]]; then
-  print -u2 -- "zsh: optional zplug plugins skipped; run the dotfiles bootstrap to install zplug."
+if [[ "${ZDOTFILES_BOOTSTRAP:-0}" != "1" ]]; then
+  return 0
 fi
+
+if [[ ! -r "$HOME/.zplug/init.zsh" ]]; then
+  print -u2 -- "zsh bootstrap: zplug is not installed at $HOME/.zplug"
+  return 1
+fi
+
+# Prevent zplug from running compinit merely to discover its own completion.
+if [[ -r "$HOME/.zplug/misc/completions/_zplug" ]]; then
+  fpath=("$HOME/.zplug/misc/completions" $fpath)
+  autoload -Uz _zplug
+fi
+
+source "$HOME/.zplug/init.zsh"
+
+zplug 'dracula/zsh', as:theme, use:'dracula.zsh-theme'
+zplug 'zsh-users/zsh-completions', use:'zsh-completions.plugin.zsh'
+zplug 'supercrabtree/k', use:'k.sh'
+zplug 'MichaelAquilina/zsh-you-should-use', use:'you-should-use.plugin.zsh'
+zplug 'Aloxaf/fzf-tab', use:'fzf-tab.plugin.zsh'
+zplug 'zsh-users/zsh-autosuggestions', use:'zsh-autosuggestions.plugin.zsh'
+zplug 'zsh-users/zsh-syntax-highlighting', use:'zsh-syntax-highlighting.plugin.zsh'
+
+if ! zplug check; then
+  print -- "Installing declared zplug plugins..."
+  zplug install || return 1
+fi
+
+zplug check || return 1

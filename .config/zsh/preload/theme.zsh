@@ -2,5 +2,6 @@
 # Theme Configuration
 
 # Dracula theme settings
-export DRACULA_DISPLAY_CONTEXT=1
-export DRACULA_DISPLAY_FULL_CWD=1
+typeset -g DRACULA_DISPLAY_CONTEXT=1
+typeset -g DRACULA_DISPLAY_FULL_CWD=1
+typeset +x DRACULA_DISPLAY_CONTEXT DRACULA_DISPLAY_FULL_CWD
