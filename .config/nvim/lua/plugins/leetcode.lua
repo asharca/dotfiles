@@ -49,7 +49,7 @@ return {
     ---@type lc.storage
 
     storage = {
-      home = "/Users/ashark/Github/MyLeetcode",
+      home = vim.fn.expand("~/Github/MyLeetcode"),
       cache = vim.fn.stdpath("cache") .. "/leetcode",
     },
 
