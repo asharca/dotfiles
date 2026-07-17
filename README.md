@@ -1,5 +1,7 @@
 # dotfiles
 
+[![Zsh CI](https://github.com/asharca/dotfiles/actions/workflows/zsh-ci.yml/badge.svg)](https://github.com/asharca/dotfiles/actions/workflows/zsh-ci.yml)
+
 个人终端配置，使用 bare Git repository 管理 `$HOME` 下的文件。支持 macOS 与常见 Linux 发行版。
 
 ## 通过 curl 直接安装
@@ -13,6 +15,8 @@
     bash -s -- dev
 )
 ```
+
+`server` 仍会安装 essential、recommended、UV、trash-cli、zplug 与 tmux 插件；它只跳过 `yt-dlp`、`rtk` 和 Claude Code。它不是最小化服务器配置。
 
 服务器环境（不安装 dev-only 工具）：
 
@@ -93,6 +97,8 @@ exec zsh
 ```bash
 zsh ~/.config/zsh/tests/run.zsh
 ```
+
+GitHub Actions 会在 `ubuntu-24.04` x64 与 `macos-15` ARM64 上，以隔离 HOME 执行固定 revision 的 Gist 安装器。测试覆盖 `curl | bash ... server`、文件重跑、bare repository 校验、插件加载、登录 shell 和必需工具失败传播。包管理器、`sudo` 与 `chsh` 使用本地 fixture，不会在 runner 上安装整套工具或修改默认 shell。
 
 测量非 TTY 启动开销：
 

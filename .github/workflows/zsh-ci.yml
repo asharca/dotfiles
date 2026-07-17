@@ -1,0 +1,125 @@
+name: Zsh CI
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - ".github/workflows/zsh-ci.yml"
+      - ".config/zsh/**"
+      - ".zshrc"
+      - ".zshenv"
+      - ".zprofile"
+      - "README.md"
+  pull_request:
+    branches: [main]
+    paths:
+      - ".github/workflows/zsh-ci.yml"
+      - ".config/zsh/**"
+      - ".zshrc"
+      - ".zshenv"
+      - ".zprofile"
+      - "README.md"
+  workflow_dispatch:
+  schedule:
+    - cron: "17 3 * * 1"
+
+permissions:
+  contents: read
+
+env:
+  GIST_REVISION: 7ec21e87209ede998b76f85fa780da9c355cd416
+  GIST_SHA256: e6fa83392fe1e9fc25ae1567cd2221f7329fac3cf946f6bfdaede9fc2776e6ab
+
+concurrency:
+  group: zsh-ci-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  server-install:
+    name: Server install smoke (${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 20
+    strategy:
+      fail-fast: false
+      matrix:
+        os:
+          - ubuntu-24.04
+          - macos-15
+    steps:
+      - name: Check out dotfiles
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Ensure Zsh is available
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          if command -v zsh >/dev/null 2>&1; then
+            exit 0
+          fi
+          if [[ "$RUNNER_OS" == "Linux" ]]; then
+            sudo apt-get update
+            sudo apt-get install -y zsh
+          else
+            brew install zsh
+          fi
+
+      - name: Validate Zsh syntax
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          while IFS= read -r -d '' file; do
+            zsh -n "$file"
+          done < <(find .config/zsh -type f -name '*.zsh' -print0)
+          for file in .zshrc .zshenv .zprofile; do
+            zsh -n "$file"
+          done
+
+      - name: Download pinned Gist installer
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          installer="$RUNNER_TEMP/cfg-install.sh"
+          url="https://gist.githubusercontent.com/asharca/4756ff76e839454d8f6bd4470ba87cf3/raw/$GIST_REVISION/cfg-install.sh"
+          curl --proto '=https' --tlsv1.2 \
+            --connect-timeout 10 --max-time 30 --retry 3 \
+            --fail --silent --show-error --location \
+            --output "$installer" "$url"
+          actual_hash="$(openssl dgst -sha256 "$installer" | awk '{print $NF}')"
+          [[ "$actual_hash" == "$GIST_SHA256" ]]
+          if [[ "$RUNNER_OS" == "macOS" ]]; then
+            /bin/bash -n "$installer"
+          else
+            bash -n "$installer"
+          fi
+
+      - name: Test server installation
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          if [[ "$RUNNER_OS" == "macOS" ]]; then
+            /bin/bash .config/zsh/tests/install-server-ci.bash \
+              "$RUNNER_TEMP/cfg-install.sh"
+          else
+            bash .config/zsh/tests/install-server-ci.bash \
+              "$RUNNER_TEMP/cfg-install.sh"
+          fi
+
+  gist-drift:
+    name: Check pinned Gist revision
+    if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - name: Compare latest revision with pin
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          latest="$(curl --proto '=https' --tlsv1.2 \
+            --connect-timeout 10 --max-time 30 --retry 3 \
+            --fail --silent --show-error --location \
+            'https://api.github.com/gists/4756ff76e839454d8f6bd4470ba87cf3' |
+            jq -r '.history[0].version')"
+          [[ "$latest" == "$GIST_REVISION" ]]

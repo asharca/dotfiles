@@ -418,6 +418,21 @@ test_nvm_remains_lazy_with_default_alias() (
   ' || fail 'NVM wrapper did not reject a broken nvm.sh'
 )
 
+test_zplug_bootstrap_rejects_broken_init() (
+  local home="$TEST_TMP/zplug-broken-home"
+  mkdir -p -- "$home/.zplug"
+  print -rl -- \
+    'zplug() { return 0; }' \
+    'return 42' \
+    >| "$home/.zplug/init.zsh"
+
+  if HOME="$home" ZDOTFILES_BOOTSTRAP=1 ZPLUG_FILE="$ZSH_ROOT/preload/zplug.zsh" \
+    "$ZSH_BIN" -dfc 'source "$ZPLUG_FILE"' >/dev/null 2>&1; then
+    fail 'zplug bootstrap accepted an init script that returned failure'
+  fi
+  return 0
+)
+
 test_linux_fallbacks_do_not_require_optional_tools() {
   local empty_bin="$TEST_TMP/linux-empty-bin"
   mkdir -p -- "$empty_bin"
@@ -606,6 +621,7 @@ run_test 'failed stream extraction removes temporary output' test_stream_extract
 run_test 'serve binds to loopback by default' test_serve_defaults_to_loopback
 run_test 'completion cache selects full or cached compinit correctly' test_completion_cache_policy
 run_test 'NVM remains lazy when a default alias exists' test_nvm_remains_lazy_with_default_alias
+run_test 'zplug bootstrap rejects a broken init script' test_zplug_bootstrap_rejects_broken_init
 run_test 'Linux fallbacks require only installed tools' test_linux_fallbacks_do_not_require_optional_tools
 run_test 'Java uses the detected Homebrew or Linuxbrew prefix' test_homebrew_java_path_uses_detected_prefix
 run_test 'Deno user binaries stay ahead of system paths' test_deno_user_bin_keeps_priority

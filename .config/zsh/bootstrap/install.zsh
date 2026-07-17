@@ -156,9 +156,10 @@ declare -A ESSENTIAL_TOOLS=(
   ["wget"]="wget"
 )
 
+INSTALL_FAILURES=()
 for cmd in ${(k)ESSENTIAL_TOOLS}; do
   [[ "$cmd" == "npm" ]] && continue
-  install_tool "$cmd" "${ESSENTIAL_TOOLS[$cmd]}"
+  install_tool "$cmd" "${ESSENTIAL_TOOLS[$cmd]}" || INSTALL_FAILURES+=("$cmd")
 done
 
 echo ""
@@ -197,11 +198,15 @@ done
 
 echo ""
 
-if [[ ${#MISSING_TOOLS[@]} -gt 0 ]]; then
-  echo "⚠️  Failed to install: ${(j:, :)MISSING_TOOLS}"
+if [[ ${#MISSING_TOOLS[@]} -gt 0 || ${#INSTALL_FAILURES[@]} -gt 0 ]]; then
+  MISSING_TOOLS+=("${INSTALL_FAILURES[@]}")
+  typeset -U MISSING_TOOLS
+  echo "✗ Failed to install required tools: ${(j:, :)MISSING_TOOLS}"
   echo "   Try manually: brew install ${(j: :)MISSING_TOOLS}"
   echo ""
+  exit 1
 fi
+unset INSTALL_FAILURES MISSING_TOOLS
 
 # ============================================
 # 5. Common Recommended Tools (both modes)
@@ -370,7 +375,9 @@ install_shell_plugins() {
   }
 
   export ZDOTFILES_BOOTSTRAP=1
-  source "$zplug_config"
+  # A curl-piped outer installer leaves stdin as a FIFO. zplug treats FIFO
+  # stdin as its legacy pipe API, so isolate declarations from inherited input.
+  source "$zplug_config" </dev/null
   source_rc=$?
   unset ZDOTFILES_BOOTSTRAP
   (( source_rc == 0 )) || return "$source_rc"
