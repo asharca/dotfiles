@@ -49,9 +49,14 @@
 先读取远端 `main`，再把该 SHA 传给管道右侧的 Bash。若 clone 期间远端发生变化，安装器会停止：
 
 ```bash
-expected_commit="$(git ls-remote https://github.com/asharca/dotfiles.git refs/heads/main | awk '{print $1}')"
-
 (
+  set -e
+  expected_commit="$(git ls-remote https://github.com/asharca/dotfiles.git refs/heads/main | awk '{print $1}')"
+  if [[ ! "$expected_commit" =~ ^[0-9a-f]{40}$ ]]; then
+    printf '无法读取远端 main commit，安装已停止。\n' >&2
+    exit 1
+  fi
+
   set -o pipefail
   curl -fsSL 'https://gist.githubusercontent.com/asharca/4756ff76e839454d8f6bd4470ba87cf3/raw/cfg-install.sh' |
     CFG_EXPECTED_COMMIT="$expected_commit" \
@@ -66,7 +71,7 @@ expected_commit="$(git ls-remote https://github.com/asharca/dotfiles.git refs/he
 安装器在发现有效的 `~/.cfg` 时会复用并验证它，但不会自动拉取远端更新。先确认工作区没有未提交的修改，再使用 fast-forward 更新，避免意外产生 merge commit：
 
 ```bash
-config status --short
+config status --short --untracked-files=no
 config pull --ff-only origin main
 exec zsh
 ```
@@ -74,12 +79,32 @@ exec zsh
 如果当前 shell 还没有加载 `config` 函数，可以直接使用完整命令：
 
 ```bash
-/usr/bin/git --git-dir="$HOME/.cfg" --work-tree="$HOME" \
+git --git-dir="$HOME/.cfg" --work-tree="$HOME" \
   pull --ff-only origin main
 exec zsh
 ```
 
-如果 `config status --short` 显示本地修改，请先提交修改或手动处理冲突，再执行更新。若本次更新改动了软件包或 zplug 插件声明，请在拉取后重新执行上方对应的 `dev` 或 `server` 安装命令，以补齐依赖。
+如果状态命令显示已跟踪文件有修改，请先提交修改或手动处理冲突，再执行更新。bare repository 默认不列出 HOME 中的未跟踪文件；需要检查某个配置目录时，使用 `config status --short --untracked-files=all -- .config/zsh`。不要在 HOME 中不限定路径地扫描全部未跟踪文件。即使存在未跟踪冲突，Git 也会拒绝覆盖并停止 pull。若本次更新改动了软件包或 zplug 插件声明，请在拉取后重新执行上方对应的 `dev` 或 `server` 安装命令，以补齐依赖。zplug 只在 bootstrap 阶段安装插件；日常 shell 启动会直接加载已安装的插件文件。
+
+## 验证 Zsh 配置
+
+修改配置后运行回归测试：
+
+```bash
+zsh ~/.config/zsh/tests/run.zsh
+```
+
+测量非 TTY 启动开销：
+
+```bash
+hyperfine --warmup 3 --runs 15 \
+  'zsh -dfi -c exit' \
+  'zsh -i -c exit'
+```
+
+历史过滤只能作为最后一道保护，而且不会回溯清理已有历史。不要在命令行直接粘贴长期凭据；临时敏感命令至少以空格开头，利用 `HIST_IGNORE_SPACE` 阻止写入历史。
+
+Linux 默认不会自动进入 tmux，避免每个交互终端被强制接管。需要恢复自动连接/创建会话时，在 `~/.zshenv` 中设置 `export ZSH_AUTO_TMUX=1`。
 
 ## 管理配置
 
@@ -90,6 +115,12 @@ config status
 config add ~/.zshrc
 config commit -m 'update zsh config'
 config push
+```
+
+bare repository 默认隐藏未跟踪文件。检查准备新增的配置目录时，显式限定路径：
+
+```bash
+config status --short --untracked-files=all -- .config/zsh
 ```
 
 请始终显式添加文件，不要在 `$HOME` 执行 `config add -A`。

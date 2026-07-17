@@ -16,7 +16,8 @@ _path_append() {
 _path_prepend "$HOME/.bun/bin"
 _path_prepend "$HOME/.npm-global/bin"
 _path_prepend "$HOME/.local/bin"
-_path_prepend "/opt/homebrew/opt/trash-cli/bin"
+[[ -n "${HOMEBREW_PREFIX:-}" ]] && \
+  _path_prepend "$HOMEBREW_PREFIX/opt/trash-cli/bin"
 
 # LM Studio is optional and belongs at the end of the user tool paths.
 _path_append "$HOME/.lmstudio/bin"
@@ -26,7 +27,7 @@ if [[ -d "$HOME/.bun" ]]; then
   [[ -r "$BUN_INSTALL/_bun" ]] && fpath=("$BUN_INSTALL" $fpath)
 fi
 
-# Make user completions visible before zplug performs its compinit pass.
+# Make user completions visible before the single compinit pass.
 [[ -d "$HOME/.zfunc" ]] && fpath=("$HOME/.zfunc" $fpath)
 
 unfunction _path_prepend _path_append
@@ -35,10 +36,7 @@ unfunction _path_prepend _path_append
 # Zoxide (smarter cd)
 (( $+commands[zoxide] )) && eval "$(zoxide init zsh)"
 
-# Starship prompt (如果安装了)
-(( $+commands[starship] )) && eval "$(starship init zsh)"
-
 # Dotfiles bare repository. A function preserves argument boundaries reliably.
 config() {
-  command /usr/bin/git --git-dir="$HOME/.cfg" --work-tree="$HOME" "$@"
+  command git --git-dir="$HOME/.cfg" --work-tree="$HOME" "$@"
 }

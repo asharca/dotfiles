@@ -3,31 +3,57 @@
 
 # Set proxy
 setproxy() {
-  local host="${1:-localhost}"
-  local port="${2:-8888}"
+  emulate -L zsh
 
-  if ! [[ "$port" =~ ^[0-9]+$ ]] || [ "$port" -lt 1 ] || [ "$port" -gt 65535 ]; then
-    echo "Error: Invalid port number (1-65535)"
-    return 1
+  if (( $# > 2 )); then
+    print -u2 -- 'Usage: setproxy [host] [port]'
+    return 2
   fi
 
-  export http_proxy="http://${host}:${port}"
-  export https_proxy="http://${host}:${port}"
-  export all_proxy="http://${host}:${port}"
+  local host="${1:-localhost}"
+  local port="${2:-8888}"
+  local url_host="$host"
 
-  echo "Proxy enabled: http://${host}:${port}"
+  if [[ -z "$host" || "$host" == *[[:space:]/@]* || "$host" == *://* ]]; then
+    print -u2 -- 'Error: Host must be a hostname or IP address without a scheme'
+    return 2
+  fi
+
+  if [[ ! "$port" =~ ^[0-9]+$ ]] || (( port < 1 || port > 65535 )); then
+    print -u2 -- 'Error: Invalid port number (1-65535)'
+    return 2
+  fi
+
+  # URI authorities require brackets around IPv6 literals.
+  if [[ "$host" == *:* && "$host" != \[*\] ]]; then
+    url_host="[$host]"
+  fi
+
+  export http_proxy="http://${url_host}:${port}"
+  export https_proxy="$http_proxy"
+  export all_proxy="$http_proxy"
+  export HTTP_PROXY="$http_proxy"
+  export HTTPS_PROXY="$https_proxy"
+  export ALL_PROXY="$all_proxy"
+
+  print -- "Proxy enabled: $http_proxy"
 }
 
 # Unset proxy
 unsetproxy() {
-  unset http_proxy https_proxy all_proxy
-  echo "Proxy disabled"
+  emulate -L zsh
+  unset http_proxy https_proxy all_proxy HTTP_PROXY HTTPS_PROXY ALL_PROXY
+  print -- 'Proxy disabled'
 }
 
 # Check proxy settings
 checkproxy() {
-  echo "Current proxy settings:"
-  echo "  http_proxy:  ${http_proxy:-not set}"
-  echo "  https_proxy: ${https_proxy:-not set}"
-  echo "  all_proxy:   ${all_proxy:-not set}"
+  emulate -L zsh
+  print -- 'Current proxy settings:'
+  print -- "  http_proxy:  ${http_proxy:-not set}"
+  print -- "  https_proxy: ${https_proxy:-not set}"
+  print -- "  all_proxy:   ${all_proxy:-not set}"
+  print -- "  HTTP_PROXY:  ${HTTP_PROXY:-not set}"
+  print -- "  HTTPS_PROXY: ${HTTPS_PROXY:-not set}"
+  print -- "  ALL_PROXY:   ${ALL_PROXY:-not set}"
 }
