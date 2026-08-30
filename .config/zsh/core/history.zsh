@@ -4,7 +4,6 @@
 HISTFILE="${HOME}/.zsh_history"
 HISTSIZE=100000
 SAVEHIST=50000
-HISTORY_IGNORE="(ls|cd|pwd|exit|date)"
 
 # History Options
 setopt BANG_HIST
@@ -20,12 +19,16 @@ setopt HIST_VERIFY
 setopt SHARE_HISTORY
 unsetopt INC_APPEND_HISTORY INC_APPEND_HISTORY_TIME
 
-# Never persist literal credentials from assignments, headers, or common CLI forms.
+# Skip noisy commands and never persist literal credentials.
 # Leading-space suppression still works via HIST_IGNORE_SPACE for one-off cases.
 autoload -Uz add-zsh-hook
 _history_reject_secrets() {
   emulate -L zsh
   setopt localoptions nocasematch
+
+  case "$1" in
+    (ls|ls\ *|cd|cd\ *|pwd|pwd\ *|exit|exit\ *|date|date\ *) return 1 ;;
+  esac
 
   if [[ "$1" =~ '(^|[[:space:];|&()])(export[[:space:]]+|env[[:space:]]+)?([A-Za-z_][A-Za-z0-9_]*)?(token|secret|password|passwd|passphrase|api_?key|access_?key|private_?key|client_?secret|auth_?key|jwt)(_[A-Za-z0-9_]+)?[[:space:]]*=' ]] ||
      [[ "$1" =~ '(^|[[:space:];|&()])(export[[:space:]]+|env[[:space:]]+)?([A-Za-z_][A-Za-z0-9_]*_)?pass(_[A-Za-z0-9_]+)?[[:space:]]*=' ]] ||

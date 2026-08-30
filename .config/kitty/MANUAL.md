@@ -185,23 +185,23 @@ kitty @ --to unix:/tmp/mykitty load-config       # 重载配置
 |---|---|---|
 | `font_family` | Maple Mono NF CN | 等宽 + Nerd Font 图标 |
 | `font_size` | 18 | 字号 |
-| `background_opacity` | 0.9 | 背景透明 |
-| `background_blur` | 64 | 毛玻璃模糊(配合透明) |
+| `background_opacity` | 0.5 | 背景透明 |
+| `background_blur` | 20 | 毛玻璃模糊(配合透明) |
 | `hide_window_decorations` | titlebar-only | 隐藏标题栏 |
 | `window_padding_width` | 5 | 内容到边缘的内边距 |
-| `window_margin_width` | 2 | 窗口外边距 |
+| `window_margin_width` | 0 | 窗口外边距 |
 | `tab_bar_edge` | bottom | 标签栏在底部 |
 | `tab_bar_style` | powerline | Powerline 尖角 |
 | `tab_powerline_style` | angled | Powerline 尖角样式 |
-| `tab_title_template` | {index}: {title} | 标签标题格式 |
+| `tab_title_template` | {index}:{title} | 标签标题格式 |
 | `active_tab_font_style` | bold | 当前标签加粗 |
 | `tab_activity_symbol` | ● | 后台标签有输出时标记 |
 | `cursor_trail` | 1 | 光标移动残影 |
-| `cursor_trail_decay` | 0.2 0.6 | 拖尾快进慢出 |
+| `cursor_trail_decay` | 0.3 0.5 | 拖尾快进慢出 |
 | `cursor_shape` | block | 方块光标 |
 | `cursor_blink_interval` | 0 | 光标不闪烁 |
 | `shell_integration` | no-cursor | 关掉 shell 集成强制改写光标(否则提示符变竖线) |
-| `disable_ligatures` | cursor | 连字保留、光标处拆开 |
+| `disable_ligatures` | never | 始终保留连字 |
 | `macos_option_as_alt` | yes | Option 当 Alt 用(⌥ 不再打特殊符号) |
 | `macos_thicken_font` | 0.4 | Retina 字体加粗描边 |
 | `scrollback_lines` | 20000 | 回滚历史行数 |
