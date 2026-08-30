@@ -2,7 +2,18 @@
 
 [![Zsh CI](https://github.com/asharca/dotfiles/actions/workflows/zsh-ci.yml/badge.svg)](https://github.com/asharca/dotfiles/actions/workflows/zsh-ci.yml)
 
-个人终端配置，使用 bare Git repository 管理 `$HOME` 下的文件。支持 macOS 与常见 Linux 发行版。
+个人 macOS / Linux 开发环境配置，使用 bare Git repository 管理 `$HOME` 下的文件。配置以模块化 Zsh 为核心，并包含 Neovim、Kitty、tmux、Git 与 OpenCode 设置。
+
+## 包含内容
+
+- 模块化 Zsh：补全缓存、历史记录保护、延迟加载 NVM 与常用命令别名。
+- Neovim：LazyVim 配置与可复现的插件锁文件。
+- Kitty、tmux 与 Git：终端外观、会话管理和 Git 默认行为。
+- Bootstrap：支持 macOS 和常见 Linux 发行版的 `dev`、`server` 安装模式。
+
+## 前置条件
+
+安装命令需要网络访问、`curl` 与 Bash。Bootstrap 会安装其余依赖；macOS / Linux 的系统包和默认 shell 变更可能要求管理员权限。
 
 ## 通过 curl 直接安装
 
