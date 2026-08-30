@@ -69,7 +69,18 @@ test_history_secret_filter() (
     _history_reject_secrets "$line" && fail "history accepted sensitive command: $line"
   done
 
+  for line in \
+    'ls' \
+    'ls -la' \
+    'cd /tmp' \
+    'pwd' \
+    'exit 1' \
+    'date'; do
+    _history_reject_secrets "$line" && fail "history accepted noisy command: $line"
+  done
+
   _history_reject_secrets 'echo bearer token documentation' || fail 'history rejected a normal command'
+  _history_reject_secrets 'lsd' || fail 'history rejected a command with an ignored-command prefix'
   _history_reject_secrets 'COMPASS=west' || fail 'history rejected a normal variable ending in pass'
   [[ -o sharehistory ]] || fail 'SHARE_HISTORY should be enabled'
   [[ ! -o incappendhistory ]] || fail 'INC_APPEND_HISTORY must be disabled when SHARE_HISTORY is enabled'

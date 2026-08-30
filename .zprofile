@@ -18,7 +18,7 @@ if [[ -n "${HOMEBREW_PREFIX:-}" ]]; then
 fi
 
 # Keep the currently installed python.org framework ahead of the system Python.
-python_bin="/Library/Frameworks/Python.framework/Versions/3.13/bin"
+python_bin="/Library/Frameworks/Python.framework/Versions/Current/bin"
 [[ -d "$python_bin" ]] && path=("$python_bin" $path)
 unset python_bin
 

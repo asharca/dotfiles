@@ -1,5 +1,4 @@
 # Deno
-[[ -f ~/.deno/env ]] && source ~/.deno/env
 [[ -d "$HOME/.deno/bin" ]] && path=("$HOME/.deno/bin" $path)
 
 # Deno completions
