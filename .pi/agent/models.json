@@ -1,0 +1,36 @@
+{
+  "providers": {
+    "rhzy-qwen": {
+      "baseUrl": "https://model.rhzy.ai/v1",
+      "apiKey": "sk-REDACTED",
+      "models": [
+        {
+          "id": "qwen3.8-27b-uncensored-fp8",
+          "api": "openai-completions",
+          "contextWindow": 256000,
+          "maxTokens": 32768
+        }
+      ]
+    },
+    "rhzy-gpt": {
+      "baseUrl": "https://model.rhzy.ai/v1",
+      "api": "openai-responses",
+      "apiKey": "sk-REDACTED"
+    },
+    "rhzy-glm": {
+      "baseUrl": "https://model.rhzy.ai/v1",
+      "api": "openai-completions",
+      "apiKey": "sk-REDACTED"
+    },
+    "rhzy-kimi": {
+      "baseUrl": "https://model.rhzy.ai/v1",
+      "api": "openai-completions",
+      "apiKey": "sk-REDACTED"
+    },
+    "rhzy-minimax": {
+      "baseUrl": "https://model.rhzy.ai/v1",
+      "api": "openai-completions",
+      "apiKey": "sk-REDACTED"
+    }
+  }
+}

@@ -1,0 +1,16 @@
+{
+  "lastChangelogVersion": "0.87.1",
+  "theme": "dark",
+  "defaultProvider": "qwen",
+  "defaultModel": "qwen3.8-27b-uncensored-fp8",
+  "defaultThinkingLevel": "max",
+  "packages": [
+    "npm:pi-web-access",
+    "npm:@narumitw/pi-btw",
+    "npm:@dietrichgebert/ponytail",
+    "npm:@plannotator/pi-extension",
+    "npm:@narumitw/pi-goal",
+    "npm:@quintinshaw/pi-dynamic-workflows",
+    "npm:pi-mcp-adapter"
+  ]
+}

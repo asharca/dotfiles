@@ -9,6 +9,7 @@
 - 模块化 Zsh：补全缓存、历史记录保护、延迟加载 NVM 与常用命令别名。
 - Neovim：LazyVim 配置与可复现的插件锁文件。
 - Kitty、tmux 与 Git：终端外观、会话管理和 Git 默认行为。
+- Pi 编码智能体（`.pi/`）：SSH 遥移、完成通知（终端失焦才提醒）与自定义模型扩展；`models.json` 中密钥已脱敏为 `sk-REDACTED`。
 - Bootstrap：支持 macOS 和常见 Linux 发行版的 `dev`、`server` 安装模式。
 
 ## 前置条件
