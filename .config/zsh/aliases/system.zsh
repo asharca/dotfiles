@@ -163,7 +163,7 @@ case "$OSTYPE" in
 esac
 
 ssh() {
-    if command -v kitty >/dev/null 2>&1; then
+    if [[ -n "${KITTY_WINDOW_ID:-}" ]] && command -v kitty >/dev/null 2>&1 && [[ -t 0 ]]; then
         kitty +kitten ssh "$@"
     else
         command ssh "$@"
