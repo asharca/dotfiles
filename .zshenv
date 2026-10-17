@@ -83,3 +83,9 @@ _zshenv_path_prepend "$HOME/.local/bin"
 
 unset _homebrew_prefix _homebrew_candidate
 unfunction _zshenv_path_prepend
+
+# XDG Base Directory (freedesktop spec) — new tools pick these up automatically.
+export XDG_CONFIG_HOME="$HOME/.config"
+export XDG_DATA_HOME="$HOME/.local/share"
+export XDG_CACHE_HOME="$HOME/.cache"
+export XDG_STATE_HOME="$HOME/.local/state"
