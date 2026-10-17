@@ -76,3 +76,6 @@ zsh_plugins_warn_missing
 
 unfunction load_config load_dir zsh_plugins_after_completion zsh_plugins_final \
   zsh_plugins_warn_missing _zsh_plugin_source _zsh_plugin_missing 2>/dev/null || :
+
+# bun completions
+[ -s "/Users/ashark/.bun/_bun" ] && source "/Users/ashark/.bun/_bun"
