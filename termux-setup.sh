@@ -43,6 +43,11 @@ printf 'Backing up replaced files to %s\n' "$backup_dir"
 rsync -a --backup --backup-dir="$backup_dir" --exclude='/.git/' \
   "$src/" "$HOME/"
 
+# A bare clone has no populated working-tree index. Register the files just
+# copied from the same commit so status and future pull --ff-only work.
+# read-tree only updates Git's index; it never overwrites HOME files.
+git --git-dir="$HOME/.cfg" --work-tree="$HOME" read-tree HEAD
+
 git --git-dir="$HOME/.cfg" config --local status.showUntrackedFiles no
 printf 'Installed branch termux at %s\n' "$bare_sha"
 printf 'Running native Termux package and plugin bootstrap...\n'

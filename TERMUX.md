@@ -44,6 +44,26 @@ zsh ~/.config/zsh/bootstrap/install.zsh server
 bash ~/.config/zsh/bootstrap/install-termux.sh --dry-run dev
 ```
 
+## 早期版本安装失败：找不到 `go` 软件包
+
+Termux 中 `go` 可执行文件由 **`golang`** 软件包提供。如果初次运行 `termux-setup.sh` 时收到 `Unable to locate package go`，说明早期脚本已经将 dotfiles 复制到 HOME 并创建了 `~/.cfg`，但安装依赖尚未完成。**不要重新运行首次安装脚本，也不要删除 `~/.cfg`**。
+
+仅在刚刚通过这个仓库首次安装、未手工向 `~/.cfg` 暂存任何更改时，可以这样继续：
+
+```sh
+# 修复旧版首次安装未初始化的 bare-repository index；不会更改 HOME 文件
+git --git-dir="$HOME/.cfg" --work-tree="$HOME" read-tree HEAD
+# 检查工作区是否存在修改；有修改时请先备份并处理，不要强行覆盖
+git --git-dir="$HOME/.cfg" --work-tree="$HOME" status --short --untracked-files=no
+# 只允许快进到已修复的 termux 分支
+git --git-dir="$HOME/.cfg" --work-tree="$HOME" pull --ff-only origin termux
+# 使用更新后的安装脚本，支持中断后重试
+bash "$HOME/.config/zsh/bootstrap/install-termux.sh" server
+exec zsh
+```
+
+如果无法更新仓库，临时解决软件包错误可直接执行 `pkg install golang`，然后在本地安装脚本里把包列表的 `go` 改成 `golang`，但建议随后同步仓库修复，避免下一次安装再次失败。若出现其他 `Unable to locate package`，检查 `pkg update` 和 `termux-change-repo` 的主仓库镜像配置。
+
 ## 更新现有 termux 安装
 
 如果已经安装了 `~/.cfg`，不要运行首次安装脚本。先检查已跟踪文件是否有未提交修改，然后只允许 fast-forward：

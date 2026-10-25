@@ -61,6 +61,13 @@ jobs:
           set -Eeuo pipefail
           bash .config/zsh/bootstrap/install-termux.sh --dry-run server | grep -q 'pkg install -y'
           bash .config/zsh/bootstrap/install-termux.sh --dry-run dev | grep -q 'Development-only:'
+          # The Termux package is 'golang' (the installed binary is 'go').
+          plan="$(bash .config/zsh/bootstrap/install-termux.sh --dry-run server)"
+          packages="$(printf '%s\n' "$plan" | grep '^pkg install -y ')"
+          [[ " $packages " == *" golang "* ]] || { echo "Missing Termux golang package" >&2; exit 1; }
+          [[ " $packages " != *" go "* ]] || { echo "Incorrect Termux go package" >&2; exit 1; }
+          # First-install bare-clone index must be initialized after rsync.
+          grep -Fq -- 'read-tree HEAD' termux-setup.sh
 
       - name: Simulate fresh Termux Zsh startup without optional plugins
         shell: bash

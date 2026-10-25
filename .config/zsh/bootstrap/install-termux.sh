@@ -14,7 +14,8 @@ if [[ $# -gt 1 || ( "$mode" != server && "$mode" != dev ) ]]; then
   exit 2
 fi
 
-essential=(git zsh bash curl wget make coreutils findutils python nodejs neovim tmux unzip go fd fzf ripgrep)
+# Termux uses package 'golang', which provides the executable named 'go'.
+essential=(git zsh bash curl wget make coreutils findutils python nodejs neovim tmux unzip golang fd fzf ripgrep)
 recommended=(openssh tree jq bat eza zoxide git-delta git-lfs btop ncdu lua-language-server)
 development=(clang cmake rust)
 
