@@ -1,30 +1,29 @@
 #!/data/data/com.termux/files/usr/bin/bash
-DIR=`cd $(dirname $0); pwd`
-COLORS_DIR=$DIR/colors
-count=0
+set -Eeuo pipefail
 
-echo -e "The default color theme is Tango.\nYou can choose another one from the list below";
+dir="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)"
+shopt -s nullglob
+themes=("$dir"/colors/*.colors)
+(( ${#themes[@]} > 0 )) || { printf 'No color schemes found.\n' >&2; exit 1; }
 
-for colors in "$COLORS_DIR"/*; do
-  colors_name[count]=$( echo $colors | awk -F'/' '{print $NF}' )
-  echo -e "($count) ${colors_name[count]}";
-  count=$(( $count + 1 ));
-done;
-count=$(( $count - 1 ));
-
-while true; do
-  read -p 'Enter a number, leave blank to not to change:' number;
-  if [[ -z "$number" ]]; then
-    break;
-  elif ! [[ $number =~ ^[0-9]+$ ]]; then
-    echo "Please enter the right number!";
-  elif (( $number>=0 && $number<=$count )); then
-    eval choice=${colors_name[number]};
-    cp -fr "$COLORS_DIR/$choice" "$DIR/colors.properties";
-    break;
-  else
-    echo "Please enter the right number!";
-  fi
+printf 'Available Termux color schemes (blank keeps the current theme):\n'
+for ((i=0; i<${#themes[@]}; ++i)); do
+  printf '(%d) %s\n' "$i" "$(basename -- "${themes[i]}")"
 done
 
-termux-reload-settings
+while true; do
+  read -r -p 'Theme number: ' choice || exit 0
+  [[ -n "$choice" ]] || exit 0
+  if [[ "$choice" =~ ^[0-9]+$ ]] && (( ${#choice} < 8 )); then
+    index=$((10#$choice))
+    if (( index < ${#themes[@]} )); then
+      cp -- "${themes[index]}" "$dir/colors.properties"
+      if command -v termux-reload-settings >/dev/null 2>&1; then
+        termux-reload-settings
+      fi
+      exit 0
+    fi
+  fi
+  printf 'Please enter a valid number.\n' >&2
+done
+

@@ -1,0 +1,77 @@
+name: Termux branch compatibility
+
+on:
+  push:
+    branches: [termux]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  static-smoke:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 15
+    steps:
+      - name: Checkout both branches
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
+        with:
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Install test interpreters
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y zsh lua5.4
+
+      - name: Validate Bash and Zsh syntax
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          for file in termux-setup.sh .config/zsh/bootstrap/install-termux.sh .termux/colors.sh .termux/fonts.sh; do
+            bash -n "$file"
+          done
+          while IFS= read -r -d '' file; do
+            zsh -n "$file"
+          done < <(find .config/zsh -type f -name '*.zsh' -print0)
+          for file in .zshrc .zshenv .zprofile; do
+            zsh -n "$file"
+          done
+          while IFS= read -r -d '' file; do
+            luac5.4 -p "$file"
+          done < <(find .config/nvim -type f -name '*.lua' -print0)
+          python3 -m json.tool .config/nvim/lazyvim.json >/dev/null
+          python3 -m json.tool .config/nvim/lazy-lock.json >/dev/null
+
+      - name: Check migrated main tree and Termux assets
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          while IFS= read -r path; do
+            [[ -e "$path" || -L "$path" ]] || { echo "Missing main file: $path" >&2; exit 1; }
+          done < <(git ls-tree -r --name-only origin/main)
+          [[ -f .termux/termux.properties ]]
+          [[ -f .termux/font.ttf ]]
+          [[ -L .termux/shell ]]
+          [[ "$(readlink .termux/shell)" == /data/data/com.termux/files/usr/bin/zsh ]]
+
+      - name: Dry-run Termux bootstrap
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          bash .config/zsh/bootstrap/install-termux.sh --dry-run server | grep -q 'pkg install -y'
+          bash .config/zsh/bootstrap/install-termux.sh --dry-run dev | grep -q 'Development-only:'
+
+      - name: Simulate fresh Termux Zsh startup without optional plugins
+        shell: bash
+        run: |
+          set -Eeuo pipefail
+          fake_home="$(mktemp -d)"
+          trap 'rm -rf -- "$fake_home"' EXIT
+          mkdir -p "$fake_home/.config"
+          cp -a .zshrc .zshenv .zprofile "$fake_home/"
+          cp -a .config/zsh "$fake_home/.config/"
+          env -i HOME="$fake_home" PATH="$PATH" TERM=xterm-256color \
+            PREFIX=/data/data/com.termux/files/usr TERMUX_VERSION=CI USER=ci \
+            zsh -i -c '[[ "$TERMUX_DOTFILES" == 1 ]] && [[ -n "$ZSH_CONFIG_DIR" ]] && (( $+functions[config] ))'
+

@@ -1,30 +1,35 @@
 #!/data/data/com.termux/files/usr/bin/bash
-DIR=`cd $(dirname $0) && pwd`
-FONTS_DIR=$DIR/fonts
-count=0
+set -Eeuo pipefail
 
-echo -e "The default font is Ubuntu font.\nYou can choose another one from list below.";
+dir="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")" && pwd -P)"
+shopt -s nullglob
+fonts=()
+for folder in "$dir"/fonts/*; do
+  [[ -d "$folder" ]] || continue
+  for font in "$folder"/*.ttf "$folder"/*.otf; do
+    [[ -f "$font" ]] && fonts+=("$font")
+  done
+done
+(( ${#fonts[@]} > 0 )) || { printf 'No fonts found.\n' >&2; exit 1; }
 
-for font in $FONTS_DIR/*/{*.ttf,*.otf}; do
-	font_file[count]=$font;
-	echo "[$count] $( echo ${font_file[count]} | awk -F'/' '{print $NF}' )";
-	count=$(( $count + 1));
-done;
-count=$(( $count - 1 ));
+printf 'Available Termux fonts (blank keeps the current font):\n'
+for ((i=0; i<${#fonts[@]}; ++i)); do
+  printf '(%d) %s\n' "$i" "${fonts[i]#"$dir"/fonts/}"
+done
 
 while true; do
-	read -p 'Enter a number, leave blank to not to change:' number;
+  read -r -p 'Font number: ' choice || exit 0
+  [[ -n "$choice" ]] || exit 0
+  if [[ "$choice" =~ ^[0-9]+$ ]] && (( ${#choice} < 8 )); then
+    index=$((10#$choice))
+    if (( index < ${#fonts[@]} )); then
+      cp -- "${fonts[index]}" "$dir/font.ttf"
+      if command -v termux-reload-settings >/dev/null 2>&1; then
+        termux-reload-settings
+      fi
+      exit 0
+    fi
+  fi
+  printf 'Please enter a valid number.\n' >&2
+done
 
-	if [[ -z "$number" ]]; then
-		break;
-	elif ! [[ $number =~ ^[0-9]+$ ]]; then
-		echo "Please enter the right number.";
-	elif (( $number >= 0 && $number <= $count )); then
-		cp -fr "${font_file[number]}" "$DIR/font.ttf";
-		break;
-	else
-		echo "Please enter the right number.";
-	fi
-done;
-
-termux-reload-settings
