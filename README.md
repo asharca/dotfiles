@@ -102,6 +102,18 @@ exec zsh
 
 如果状态命令显示已跟踪文件有修改，请先提交修改或手动处理冲突，再执行更新。bare repository 默认不列出 HOME 中的未跟踪文件；需要检查某个配置目录时，使用 `config status --short --untracked-files=all -- .config/zsh`。不要在 HOME 中不限定路径地扫描全部未跟踪文件。即使存在未跟踪冲突，Git 也会拒绝覆盖并停止 pull。若本次更新改动了软件包或 zplug 插件声明，请在拉取后重新执行上方对应的 `dev` 或 `server` 安装命令，以补齐依赖。zplug 只在 bootstrap 阶段安装插件；日常 shell 启动会直接加载已安装的插件文件。
 
+## SSH 使用方式
+
+`ssh` 默认直接运行系统 OpenSSH，不根据 `KITTY_WINDOW_ID` 等继承的环境变量自动切换到 Kitty。SSH 远程会话、tmux 和普通终端中都使用相同的行为，主机密钥校验保持不变。
+
+需要 Kitty 的 SSH 增强功能时，在实际的 Kitty 窗口中显式运行：
+
+```bash
+kitty +kitten ssh user@host
+```
+
+更新后执行 `exec zsh`；如需保留当前 shell，可运行 `source ~/.config/zsh/aliases/system.zsh`，这也会清除旧的 `ssh` 函数和别名。
+
 ## 验证 Zsh 配置
 
 修改配置后运行回归测试：

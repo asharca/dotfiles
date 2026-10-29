@@ -7,7 +7,6 @@ typeset -gr TEST_DIR="${0:A:h}"
 typeset -gr ZSH_ROOT="${TEST_DIR:h}"
 typeset -gr ZSH_BIN="${commands[zsh]:A}"
 typeset -gr TEST_ZSH_VERSION="$ZSH_VERSION"
-typeset -gr SSH_FUNCTION_SHA256='f97b7edcc0953414316629c5ffaaff98c1f7fd90d512e82804d372454f1a1958'
 typeset -g TEST_TMP=""
 typeset -g _test_tmp_root="${TMPDIR:-/tmp}"
 TEST_TMP="$(mktemp -d "${_test_tmp_root%/}/zsh-config-tests.XXXXXXXXXX")" || {
@@ -531,26 +530,6 @@ test_yazi_preserves_failure_status() (
   ' >/dev/null 2>&1 || fail 'yazi wrapper swallowed the yazi process failure status'
 )
 
-test_ssh_function_is_unchanged() {
-  local file="$ZSH_ROOT/aliases/system.zsh"
-  local actual
-  if (( $+commands[shasum] )); then
-    actual="$(sed -n '/^ssh() {$/,/^}$/p' "$file" | shasum -a 256 | awk '{print $1}')"
-  elif (( $+commands[sha256sum] )); then
-    actual="$(sed -n '/^ssh() {$/,/^}$/p' "$file" | sha256sum | awk '{print $1}')"
-  else
-    fail 'neither shasum nor sha256sum is available'
-  fi
-  assert_eq "$SSH_FUNCTION_SHA256" "$actual" 'ssh() changed despite the explicit exclusion'
-
-  local runtime_definition
-  runtime_definition="$("$ZSH_BIN" -i -c 'functions ssh' 2>/dev/null)" || return 1
-  [[ "$runtime_definition" == *'kitty +kitten ssh "$@"'* ]] ||
-    fail 'runtime startup replaced the requested Kitty ssh behavior'
-  [[ "$runtime_definition" == *'command ssh "$@"'* ]] ||
-    fail 'runtime startup replaced the OpenSSH fallback'
-}
-
 test_runtime_loads_plugins_without_zplug() {
   local output
   output="$("$ZSH_BIN" -i -c '
@@ -640,7 +619,6 @@ run_test 'bak handles a trailing directory slash safely' test_bak_trailing_slash
 run_test 'Darwin network helpers use native commands' test_darwin_network_helpers_are_native
 run_test 'proxy helpers clean both cases and support IPv6' test_proxy_cleanup_and_ipv6
 run_test 'Yazi wrapper preserves command failures' test_yazi_preserves_failure_status
-run_test 'ssh function remains unchanged' test_ssh_function_is_unchanged
 run_test 'runtime loads plugins without zplug' test_runtime_loads_plugins_without_zplug
 run_test 'interactive startup does not write zplug logs' test_startup_does_not_write_zplug_trace
 run_test 'missing plugins degrade with one warning' test_missing_plugins_degrade_gracefully

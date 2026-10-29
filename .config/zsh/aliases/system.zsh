@@ -162,10 +162,6 @@ case "$OSTYPE" in
     ;;
 esac
 
-ssh() {
-    if [[ -n "${KITTY_WINDOW_ID:-}" ]] && command -v kitty >/dev/null 2>&1 && [[ -t 0 ]]; then
-        kitty +kitten ssh "$@"
-    else
-        command ssh "$@"
-    fi
-}
+# Use OpenSSH by default; inherited Kitty variables do not identify this terminal.
+unalias ssh 2>/dev/null || :
+unfunction ssh 2>/dev/null || :
