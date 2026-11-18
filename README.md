@@ -1,56 +1,62 @@
-# dotfiles
+# 主目录使用规范
 
-[![Zsh CI](https://github.com/asharca/dotfiles/actions/workflows/zsh-ci.yml/badge.svg)](https://github.com/asharca/dotfiles/actions/workflows/zsh-ci.yml)
+这个目录是 macOS 主目录。系统目录和工具配置保留原位；只有个人资料和项目按下列规则存放。
 
-个人 macOS / Linux 开发环境配置，使用 bare Git repository 管理 `$HOME` 下的文件。配置以模块化 Zsh 为核心，并包含 Neovim、Kitty、tmux、Git 与 OpenCode 设置。
+## 顶层目录
 
-## 包含内容
+| 目录 | 用途 | 规则 |
+| --- | --- | --- |
+| `Desktop` | 临时可见文件 | 每周清空或移入正式目录，不长期存放项目。 |
+| `Documents` | 个人正式文档 | 按主题建一层目录，例如 `Documents/财务/`、`Documents/证件/`。 |
+| `Downloads` | 下载收件箱 | 新下载的文件先放这里；确认用途后移动，非存档文件定期删除。 |
+| `Github` | 外部开源仓库的阅读与试用区 | 只放第三方仓库、示例和临时验证；不作为自己项目的长期开发目录。 |
+| `Code` | 唯一的长期代码工作区 | 所有自己维护、持续开发或需要交付的代码都放这里，不论仓库托管在 GitHub、GitLab 还是本地。推荐按类型分组：`apps/`、`scripts/`、`experiments/`。 |
+| `Work` | 工作项目、方案、交付资料 | 一个项目一个目录；代码项目可链接或引用 `Code`/`Github` 中的仓库，不复制仓库。 |
+| `Pictures`、`Movies`、`Music` | 媒体库 | 仅存放对应媒体，不混入项目附件。 |
+| `Public` | 对外共享文件 | 只放准备共享的副本，不作为唯一存档。 |
+| `bin` | 个人可执行脚本 | 脚本应可独立运行，并在文件开头写明用途。 |
 
-- 模块化 Zsh：补全缓存、历史记录保护、延迟加载 NVM 与常用命令别名。
-- Neovim：LazyVim 配置与可复现的插件锁文件。
-- Kitty、tmux 与 Git：终端外观、会话管理和 Git 默认行为。
-- Pi 编码智能体（`.pi/`）：SSH 遥移、完成通知（终端失焦才提醒）与自定义模型扩展；`models.json` 中密钥已脱敏为 `sk-REDACTED`。
-- Bootstrap：支持 macOS 和常见 Linux 发行版的 `dev`、`server` 安装模式。
+## 不要整理的目录
 
-## 前置条件
+以下目录由 macOS、应用或开发工具管理，不手动合并、移动或批量删除：
 
-安装命令需要网络访问、`curl` 与 Bash。Bootstrap 会安装其余依赖；macOS / Linux 的系统包和默认 shell 变更可能要求管理员权限。
+- `Library`、`Applications`、`go`
+- 所有以 `.` 开头的目录和文件，例如 `.config`、`.ssh`、`.npm`、`.nvm`、`.pi`
 
-## 通过 curl 直接安装
+清理前先确认对应应用或工具已卸载；`~/.ssh`、shell 配置和密钥文件尤其不要随意移动。
 
-完整开发环境：
+## 项目目录规范
 
-```bash
-(
-  set -o pipefail
-  curl -fsSL 'https://gist.githubusercontent.com/asharca/4756ff76e839454d8f6bd4470ba87cf3/raw/cfg-install.sh' |
-    bash -s -- dev
-)
+每个长期项目使用一个独立目录，推荐结构如下：
+
+```text
+项目名/
+├── README.md        # 项目目的、运行方式、重要链接
+├── docs/            # 方案、决策、使用说明
+├── src/             # 源代码（项目需要时）
+├── scripts/         # 项目专用脚本（项目需要时）
+├── data/            # 可再生成或原始数据；大文件不提交 Git
+├── output/          # 构建产物、报告、导出结果；可删除时注明生成方式
+└── archive/         # 已结束且仍需保留的阶段性资料
 ```
 
-`server` 仍会安装 essential、recommended、UV、trash-cli、zplug 与 tmux 插件；它只跳过 `yt-dlp`、`rtk` 和 Claude Code。它不是最小化服务器配置。
+不需要的目录不要预先创建。使用 Git 的项目应补充 `.gitignore`，避免提交密钥、依赖目录、构建产物和大文件。
 
-服务器环境（不安装 dev-only 工具）：
+## 文件命名
 
-```bash
-(
-  set -o pipefail
-  curl -fsSL 'https://gist.githubusercontent.com/asharca/4756ff76e839454d8f6bd4470ba87cf3/raw/cfg-install.sh' |
-    bash -s -- server
-)
-```
+- 新项目目录：使用清晰的名称，英文项目用 `kebab-case`，中文项目可直接使用中文名称。
+- 日期文件：使用 `YYYY-MM-DD-主题`，例如 `2026-03-31-周报.md`。
+- 版本文件：使用 `v1`、`v2` 或 Git 标签；不要使用“最终版”“最终最终版”。
+- 临时文件：文件名带 `tmp` 或放入 `Downloads` / `Desktop`，完成后删除或归位。
 
-### 安全替换已有的 `~/.cfg`
+## 日常流程
 
-通过管道执行时 stdin 不是终端，因此替换模式必须显式添加 `--yes`：
+1. 下载文件先进入 `Downloads`，确认用途后在当天归位。
+2. 新代码一律放入 `Code`：项目托管平台不决定目录位置。只有第三方仓库的阅读、试用和一次性验证放入 `Github`；需要长期修改、交付或维护时，将仓库迁入 `Code`。
+3. 项目结束后保留最终交付物和 `README.md`，其余可再生成内容删除或放到项目的 `archive/`。
+4. 每月检查一次 `Desktop`、`Downloads` 和没有说明文件的项目目录。
 
-```bash
-(
-  set -o pipefail
-  curl -fsSL 'https://gist.githubusercontent.com/asharca/4756ff76e839454d8f6bd4470ba87cf3/raw/cfg-install.sh' |
-    bash -s -- --replace-existing --yes dev
-)
-```
+## 当前目录的处理原则
 
 替换是非破坏性的：
 
