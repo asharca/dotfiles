@@ -81,3 +81,7 @@ unfunction load_config load_dir zsh_plugins_after_completion zsh_plugins_final \
 if [ -s "$HOME/.bun/_bun" ]; then
   source "$HOME/.bun/_bun"
 fi
+
+# omp 内联图片：herdr pane 下强制使用 Kitty graphics 协议
+# 依赖 herdr [terminal] kitty_graphics = true（已配置）
+export PI_FORCE_IMAGE_PROTOCOL=kitty
